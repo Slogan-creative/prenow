@@ -6,7 +6,7 @@ begin
  if auth.uid() is null then raise exception 'Accesso non autorizzato'; end if;
  select id into t from public.tenants where slug=p_slug;
  if t is null then raise exception 'Salone non trovato'; end if;
- select jsonb_build_object('nome',nome,'services',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'nome',nome,'durata',durata_min,'prezzo',prezzo_centesimi) order by ordine),'[]') from public.services where tenant_id=t and attivo),'operators',(select coalesce(jsonb_agg(jsonb_build_object('id',o.id,'nome',o.nome,'services',(select coalesce(jsonb_agg(service_id),'[]') from public.operator_services where operator_id=o.id)) order by o.nome),'[]') from public.operators o where tenant_id=t and attivo)) into result from public.tenants where id=t;
+ select jsonb_build_object('nome',nome,'services',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'nome',nome,'durata_min',durata_min,'prezzo_centesimi',prezzo_centesimi,'durata',durata_min,'prezzo',prezzo_centesimi) order by ordine nulls last, created_at asc, id),'[]') from public.services where tenant_id=t and attivo),'operators',(select coalesce(jsonb_agg(jsonb_build_object('id',o.id,'nome',o.nome,'services',(select coalesce(jsonb_agg(service_id),'[]') from public.operator_services where operator_id=o.id)) order by o.nome),'[]') from public.operators o where tenant_id=t and attivo)) into result from public.tenants where id=t;
  return result;
 end $$;
 
