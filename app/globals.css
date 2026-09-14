@@ -231,7 +231,7 @@ table.data-table tr:hover td{background:var(--surface-2);}
 /* Home */
 .customer-ui .claude-home{padding:56px 28px 18px}
 .customer-ui .customer-hero{text-align:center}
-.customer-ui .brand-logo{max-width:280px;width:94%;margin:0 auto;display:block;height:auto;object-fit:contain}
+.customer-ui .brand-logo{max-width:360px;width:94%;margin:0 auto;display:block;height:auto;object-fit:contain}
 .customer-ui .brand-logo+h1{margin-top:30px}
 .customer-ui .customer-wordmark{font-size:32px;text-transform:uppercase;letter-spacing:4px;margin:34px 0}
 .customer-ui .customer-hero h1{font-size:46px;line-height:1.08;margin:0}
@@ -253,6 +253,14 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .customer-ui .svc-teaser-durata{color:var(--text-muted);font-size:12.5px;margin-top:2px}
 .customer-ui .svc-teaser-prezzo{color:var(--customer-gold);font-weight:700;font-size:14.5px}
 .customer-ui .svc-see-all{display:flex;align-items:center;justify-content:center;width:100%;gap:6px;padding:14px 0 12px;background:none;border:none;color:var(--customer-gold);font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;text-decoration:none;text-align:center}
+.customer-ui .svc-full-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 20px;margin:0 20px}
+.customer-ui .svc-full-row{display:flex;justify-content:space-between;align-items:center;width:100%;padding:15px 0;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;cursor:pointer;font-family:inherit;text-align:left}
+.customer-ui .svc-full-row:last-child{border-bottom:none}
+.customer-ui .svc-full-nome{font-weight:600;font-size:15px;color:var(--text)}
+.customer-ui .svc-full-durata{color:var(--text-muted);font-size:12.5px;margin-top:2px}
+.customer-ui .svc-full-right{display:flex;align-items:center;gap:10px}
+.customer-ui .svc-full-prezzo{color:var(--customer-gold);font-weight:700;font-size:14.5px}
+.customer-ui .svc-full-chev{color:var(--text-faint);font-size:18px}
 
 /* Common title bar */
 .customer-ui .claude-page{min-height:calc(100dvh - 92px)}
