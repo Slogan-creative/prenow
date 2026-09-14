@@ -15,7 +15,7 @@ export default async function Settings({params, searchParams}: {params: Promise<
     db.from('services').select('id,nome,durata_min,prezzo_centesimi,attivo').eq('tenant_id',id).order('ordine'),
     db.from('business_hours').select('id,weekday,chiuso,fasce').eq('tenant_id',id).is('operator_id',null).order('weekday'),
     db.from('operators').select('nome').eq('tenant_id',id),
-    db.from('tenant_branding').select('nome,logo_url,primary_color,background_color,text_color').eq('tenant_id',id).maybeSingle()
+    db.from('tenant_branding').select('logo_url,color_primary,color_bg,color_text').eq('tenant_id',id).maybeSingle()
   ]);
   if (tenant.error || services.error || hours.error || operators.error || branding.error) throw new Error('Impossibile leggere la configurazione. Riprova.');
   if (!tenant.data) notFound();
@@ -27,9 +27,9 @@ export default async function Settings({params, searchParams}: {params: Promise<
     <h2>Personalizzazione</h2><p>Questi dati definiscono l’identità grafica dell’app cliente.</p>
     {branding.data && <form action={saveSettings} className="settings-card branding-form">
       <input type="hidden" name="tenant" value={id}/><input type="hidden" name="kind" value="branding"/>
-      <div className="field"><label htmlFor="branding-name">Nome visualizzato</label><input id="branding-name" name="nome" defaultValue={branding.data.nome || tenant.data.nome} required maxLength={120}/></div>
+      <div className="field"><label htmlFor="branding-name">Nome visualizzato</label><input id="branding-name" name="nome" defaultValue={tenant.data.nome} required maxLength={120}/></div>
       <div className="field"><label htmlFor="branding-logo">Logo (URL HTTPS, facoltativo)</label><input id="branding-logo" name="logo_url" type="url" defaultValue={branding.data.logo_url || ''} placeholder="https://…"/></div>
-      <div className="field-row"><div className="field"><label htmlFor="branding-primary">Colore principale</label><input id="branding-primary" name="primary_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.primary_color}/></div><div className="field"><label htmlFor="branding-bg">Sfondo</label><input id="branding-bg" name="background_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.background_color}/></div><div className="field"><label htmlFor="branding-text">Testo</label><input id="branding-text" name="text_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.text_color}/></div></div>
+      <div className="field-row"><div className="field"><label htmlFor="branding-primary">Colore principale</label><input id="branding-primary" name="primary_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.color_primary}/></div><div className="field"><label htmlFor="branding-bg">Sfondo</label><input id="branding-bg" name="background_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.color_bg}/></div><div className="field"><label htmlFor="branding-text">Testo</label><input id="branding-text" name="text_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.color_text}/></div></div>
       <button className="btn btn-primary" type="submit">Salva personalizzazione</button>
     </form>}
     <h2>Servizi</h2><p>Salva ogni servizio dopo averlo modificato. I servizi disattivati restano nello storico.</p>

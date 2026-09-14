@@ -44,7 +44,9 @@ export async function saveSettings(form: FormData) {
     const text = String(form.get('text_color') || '').trim();
     const hex = (v: string) => /^#[0-9a-f]{6}$/i.test(v);
     if (!nome || nome.length > 120 || (logo && !/^https:\/\//i.test(logo)) || !hex(primary) || !hex(background) || !hex(text)) fail('Controlla nome, logo HTTPS e colori esadecimali.');
-    const { error } = await db.from('tenant_branding').update({nome, logo_url: logo || null, primary_color: primary, background_color: background, text_color: text}).eq('tenant_id', tenant);
+    const { error: tenantError } = await db.from('tenants').update({nome}).eq('id', tenant);
+    if (tenantError) fail('Nome applicazione non salvato. Riprova.');
+    const { error } = await db.from('tenant_branding').update({logo_url: logo || null, color_primary: primary, color_bg: background, color_text: text}).eq('tenant_id', tenant);
     if (error) fail('Personalizzazione non salvata. Riprova.');
   } else fail('Operazione non valida.');
   revalidatePath(path);
