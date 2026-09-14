@@ -261,6 +261,17 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .customer-ui .svc-full-right{display:flex;align-items:center;gap:10px}
 .customer-ui .svc-full-prezzo{color:var(--customer-gold);font-weight:700;font-size:14.5px}
 .customer-ui .svc-full-chev{color:var(--text-faint);font-size:18px}
+.customer-ui .op-full-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 20px;margin:0;width:100%}
+.customer-ui .op-row{display:flex;align-items:center;gap:12px;width:100%;padding:13px 0;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;cursor:pointer;font-family:inherit;text-align:left}
+.customer-ui .op-row:last-child{border-bottom:none}
+.customer-ui .op-avatar{width:34px;height:34px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:Georgia,'Times New Roman',serif;color:var(--customer-gold);font-size:14px;flex-shrink:0;text-transform:uppercase}
+.customer-ui .op-name{font-weight:600;font-size:14.5px;flex:1;color:var(--text)}
+.customer-ui .op-chev{color:var(--text-faint);font-size:17px}
+.customer-ui .time-section+.time-section{margin-top:16px}
+.customer-ui .time-section-label{font-size:12px;color:var(--customer-gold);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin:0 0 8px}
+.customer-ui .time-chip-wrap{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+.customer-ui .time-chip{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:9px 16px;font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--text)}
+.customer-ui .time-chip.selected{background:var(--customer-gold);color:#1a1508;border-color:var(--customer-gold)}
 
 /* Common title bar */
 .customer-ui .claude-page{min-height:calc(100dvh - 92px)}
