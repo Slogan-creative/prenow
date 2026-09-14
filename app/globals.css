@@ -246,14 +246,14 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .customer-ui .service-list small{font-size:17px;color:var(--customer-muted)}
 .customer-ui .service-list b{font-size:30px;color:#796f5b}
 .customer-ui .section-label{font-size:16px;letter-spacing:1.5px;text-transform:uppercase;color:#8c816b;margin:42px 20px 14px}
-.customer-ui .svc-teaser-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 18px;margin:0 20px}
+.customer-ui .svc-teaser-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 18px;margin:0;width:100%}
 .customer-ui .svc-teaser-row{display:flex;justify-content:space-between;align-items:center;width:100%;padding:13px 0;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;cursor:pointer;font-family:inherit;text-align:left;text-decoration:none}
 .customer-ui .svc-teaser-row.last{border-bottom:none}
 .customer-ui .svc-teaser-nome{font-weight:600;font-size:14.5px;color:var(--text)}
 .customer-ui .svc-teaser-durata{color:var(--text-muted);font-size:12.5px;margin-top:2px}
 .customer-ui .svc-teaser-prezzo{color:var(--customer-gold);font-weight:700;font-size:14.5px}
 .customer-ui .svc-see-all{display:flex;align-items:center;justify-content:center;width:100%;gap:6px;padding:14px 0 12px;background:none;border:none;color:var(--customer-gold);font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;text-decoration:none;text-align:center}
-.customer-ui .svc-full-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 20px;margin:0 20px}
+.customer-ui .svc-full-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px 20px;margin:0;width:100%}
 .customer-ui .svc-full-row{display:flex;justify-content:space-between;align-items:center;width:100%;padding:15px 0;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;cursor:pointer;font-family:inherit;text-align:left}
 .customer-ui .svc-full-row:last-child{border-bottom:none}
 .customer-ui .svc-full-nome{font-weight:600;font-size:15px;color:var(--text)}
