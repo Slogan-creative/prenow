@@ -1,7 +1,7 @@
 # Prenow — primo test Super Admin
 
 Questo pacchetto contiene il primo modulo reale, non l'intera piattaforma.
-Disponibili: login Supabase, controllo ruolo Super Admin, Dashboard con dati del database, elenco applicazioni, logout.
+Disponibili: login Supabase, controllo ruolo Super Admin, Dashboard con dati del database, elenco applicazioni, modifica servizi e orari, logout.
 Non disponibili: prenotazione, backoffice staff, wizard, branding, notifiche, PWA installabile, separazione per sottodominio.
 Il middleware di questo modulo aggiorna soltanto la sessione; la risoluzione dei tenant sarà aggiunta con la PWA.
 
@@ -28,3 +28,7 @@ npm install
 npm run typecheck
 npm run build
 npm run dev
+
+
+## Gestione applicazioni
+Da Applicazioni, cliccare sul nome del salone. Si possono modificare i servizi esistenti (nome, prezzo, durata, attivazione) e le fasce orarie esistenti, salvando ogni scheda separatamente. Non richiede SQL aggiuntivo. Creazione nuovi servizi, gestione operatori e prenotazioni non incluse in questo aggiornamento.
