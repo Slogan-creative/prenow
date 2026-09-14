@@ -25,7 +25,7 @@ export default async function Settings({params, searchParams}: {params: Promise<
     {message.saved && <p role="status" style={{color:'var(--success)'}}>Modifica salvata.</p>}
     {message.error && <p role="alert" style={{color:'var(--danger)'}}>{message.error}</p>}
     <p>Operatori: {operators.data?.map(o=>o.nome).join(', ') || 'Nessuno'}.</p>
-    <nav className="toolbar"><Link href={`/admin/applicazioni/${id}/gestione`}>Gestisci operatori e servizi</Link><Link href={`/admin/applicazioni/${id}/disponibilita`}>Chiusure, assenze e blocchi</Link><Link href={`/admin/agenda?tenant=${id}`}>Agenda</Link><Link href={`/admin/applicazioni/${id}/prenotazione`}>Prenotazione manuale</Link></nav>
+    <nav className="toolbar"><Link href={`/admin/applicazioni/${id}/gestione`}>Gestisci operatori e servizi</Link><Link href={`/admin/applicazioni/${id}/disponibilita`}>Chiusure, assenze e blocchi</Link><Link href={`/admin/agenda?tenant=${id}`}>Agenda</Link><Link href={`/admin/applicazioni/${id}/prenotazione`}>Prenotazione manuale</Link><Link href={`/admin/applicazioni/${id}/staff`}>Accessi staff</Link></nav>
     <h2>Personalizzazione</h2><p>Questi dati definiscono l’identità grafica dell’app cliente.</p>
     {branding.data && <LogoUpload tenant={id} logo={branding.data.logo_url || null}/>}
     {branding.data && <form action={saveSettings} className="settings-card branding-form">
