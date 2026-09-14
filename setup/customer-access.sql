@@ -35,11 +35,11 @@ end $$;
 
 create or replace function public.prenow_customer_book(p_slug text,p_service uuid,p_operator uuid,p_start timestamptz,p_nome text,p_cognome text,p_telefono text)
 returns uuid language plpgsql security definer set search_path='' as $$
-declare t uuid; duration integer; customer uuid; booking uuid; email text; u uuid;
+declare t uuid; duration integer; customer uuid; booking uuid; v_email text; u uuid;
 begin
  u:=auth.uid(); if u is null then raise exception 'Accedi per prenotare'; end if;
- select lower(a.email) into email from auth.users a where a.id=u and a.email_confirmed_at is not null;
- if email is null then raise exception 'Conferma la tua email prima di prenotare'; end if;
+ select lower(a.email) into v_email from auth.users a where a.id=u and a.email_confirmed_at is not null;
+ if v_email is null then raise exception 'Conferma la tua email prima di prenotare'; end if;
  if p_nome is null or p_cognome is null or p_telefono is null or length(trim(p_nome)) not between 1 and 120 or length(trim(p_cognome)) not between 1 and 120 or p_telefono !~ '^\+?[0-9 ()-]{6,25}$' then raise exception 'Controlla nome, cognome e cellulare'; end if;
  select s.tenant_id,s.durata_min into t,duration from public.services s join public.tenants x on x.id=s.tenant_id where x.slug=p_slug and s.id=p_service and s.attivo;
  if t is null then raise exception 'Servizio non disponibile'; end if;
@@ -48,8 +48,8 @@ begin
  -- Nessun collegamento automatico di profili già presenti in base alla sola email.
  select c.id into customer from public.customers c where c.tenant_id=t and c.user_id=u order by c.created_at limit 1;
  if customer is null then
-  if exists(select 1 from public.customers c where c.tenant_id=t and lower(c.email)=email) then raise exception 'Profilo già presente: contatta il salone per collegare il tuo account'; end if;
-  insert into public.customers(tenant_id,user_id,nome,cognome,email,telefono) values(t,u,trim(p_nome),trim(p_cognome),email,trim(p_telefono)) returning id into customer;
+  if exists(select 1 from public.customers c where c.tenant_id=t and lower(c.email)=v_email) then raise exception 'Profilo già presente: contatta il salone per collegare il tuo account'; end if;
+  insert into public.customers(tenant_id,user_id,nome,cognome,email,telefono) values(t,u,trim(p_nome),trim(p_cognome),v_email,trim(p_telefono)) returning id into customer;
  else
   update public.customers set nome=trim(p_nome),cognome=trim(p_cognome),telefono=trim(p_telefono) where id=customer and user_id=u;
  end if;
