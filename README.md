@@ -48,3 +48,7 @@ Eseguire setup/customer-access.sql una volta nel SQL Editor; non modifica le pol
 
 ## Interfaccia clienti mobile
 Servizi a schede, orari selezionabili, riepilogo prima della conferma e pulsante disabilitato durante il salvataggio. Stile scuro con accento oro in area clienti. Non serve rieseguire SQL. Compilazione e tipi verificati; resa mobile da verificare nel browser dopo il caricamento.
+
+
+## Prenotazione guidata
+Quattro schermate: servizio, operatore/giorno/orario, dati cliente, riepilogo. Gli orari sono caricati automaticamente; cambiare scelta azzera l’orario precedente. I dati cliente restano disponibili tornando indietro nel percorso. Nessun nuovo SQL necessario. Campo data mobile ridimensionato; verifica finale su iPhone necessaria.
