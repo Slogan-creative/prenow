@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { requirePlatformAdmin } from '@/lib/auth';
 import { createServerClient } from '@/lib/supabase/server';
 import { saveSettings } from './actions';
+import LogoUpload from './LogoUpload';
 
 export default async function Settings({params, searchParams}: {params: Promise<{id:string}>; searchParams: Promise<{saved?:string;error?:string}>}) {
   await requirePlatformAdmin();
@@ -25,6 +26,7 @@ export default async function Settings({params, searchParams}: {params: Promise<
     {message.error && <p role="alert" style={{color:'var(--danger)'}}>{message.error}</p>}
     <p>Operatori: {operators.data?.map(o=>o.nome).join(', ') || 'Nessuno'}.</p>
     <h2>Personalizzazione</h2><p>Questi dati definiscono l’identità grafica dell’app cliente.</p>
+    {branding.data && <LogoUpload tenant={id} logo={branding.data.logo_url || null}/>}
     {branding.data && <form action={saveSettings} className="settings-card branding-form">
       <input type="hidden" name="tenant" value={id}/><input type="hidden" name="kind" value="branding"/>
       <div className="field"><label htmlFor="branding-name">Nome visualizzato</label><input id="branding-name" name="nome" defaultValue={tenant.data.nome} required maxLength={120}/></div>
