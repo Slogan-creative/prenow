@@ -10,19 +10,28 @@ export default async function Settings({params, searchParams}: {params: Promise<
   const message = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const db = await createServerClient();
-  const [tenant, services, hours, operators] = await Promise.all([
+  const [tenant, services, hours, operators, branding] = await Promise.all([
     db.from('tenants').select('nome').eq('id',id).maybeSingle(),
     db.from('services').select('id,nome,durata_min,prezzo_centesimi,attivo').eq('tenant_id',id).order('ordine'),
     db.from('business_hours').select('id,weekday,chiuso,fasce').eq('tenant_id',id).is('operator_id',null).order('weekday'),
-    db.from('operators').select('nome').eq('tenant_id',id)
+    db.from('operators').select('nome').eq('tenant_id',id),
+    db.from('tenant_branding').select('nome,logo_url,primary_color,background_color,text_color').eq('tenant_id',id).maybeSingle()
   ]);
-  if (tenant.error || services.error || hours.error || operators.error) throw new Error('Impossibile leggere la configurazione. Riprova.');
+  if (tenant.error || services.error || hours.error || operators.error || branding.error) throw new Error('Impossibile leggere la configurazione. Riprova.');
   if (!tenant.data) notFound();
   const days = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
   return <><Link href="/admin/applicazioni">← Applicazioni</Link><h1 className="page-title">{tenant.data.nome}</h1>
     {message.saved && <p role="status" style={{color:'var(--success)'}}>Modifica salvata.</p>}
     {message.error && <p role="alert" style={{color:'var(--danger)'}}>{message.error}</p>}
     <p>Operatori: {operators.data?.map(o=>o.nome).join(', ') || 'Nessuno'}.</p>
+    <h2>Personalizzazione</h2><p>Questi dati definiscono l’identità grafica dell’app cliente.</p>
+    {branding.data && <form action={saveSettings} className="settings-card branding-form">
+      <input type="hidden" name="tenant" value={id}/><input type="hidden" name="kind" value="branding"/>
+      <div className="field"><label htmlFor="branding-name">Nome visualizzato</label><input id="branding-name" name="nome" defaultValue={branding.data.nome || tenant.data.nome} required maxLength={120}/></div>
+      <div className="field"><label htmlFor="branding-logo">Logo (URL HTTPS, facoltativo)</label><input id="branding-logo" name="logo_url" type="url" defaultValue={branding.data.logo_url || ''} placeholder="https://…"/></div>
+      <div className="field-row"><div className="field"><label htmlFor="branding-primary">Colore principale</label><input id="branding-primary" name="primary_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.primary_color}/></div><div className="field"><label htmlFor="branding-bg">Sfondo</label><input id="branding-bg" name="background_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.background_color}/></div><div className="field"><label htmlFor="branding-text">Testo</label><input id="branding-text" name="text_color" type="text" pattern="#[0-9a-fA-F]{6}" defaultValue={branding.data.text_color}/></div></div>
+      <button className="btn btn-primary" type="submit">Salva personalizzazione</button>
+    </form>}
     <h2>Servizi</h2><p>Salva ogni servizio dopo averlo modificato. I servizi disattivati restano nello storico.</p>
     <div className="settings-grid">{services.data?.map(s=><form action={saveSettings} className="settings-card" key={s.id}>
       <input type="hidden" name="tenant" value={id}/><input type="hidden" name="id" value={s.id}/><input type="hidden" name="kind" value="service"/>

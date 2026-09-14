@@ -36,6 +36,16 @@ export async function saveSettings(form: FormData) {
     if (!chiuso && (!fasce.length || (fasce.length === 2 && fasce[0].a > fasce[1].da))) fail('Inserisci almeno una fascia senza sovrapposizioni.');
     const {data,error} = await db.from('business_hours').update({chiuso,fasce}).eq('tenant_id',tenant).eq('id',id).is('operator_id',null).select('id');
     if (error || !data?.length) fail('Orario non salvato. Riprova.');
+  } else if (form.get('kind') === 'branding') {
+    const nome = String(form.get('nome') || '').trim();
+    const logo = String(form.get('logo_url') || '').trim();
+    const primary = String(form.get('primary_color') || '').trim();
+    const background = String(form.get('background_color') || '').trim();
+    const text = String(form.get('text_color') || '').trim();
+    const hex = (v: string) => /^#[0-9a-f]{6}$/i.test(v);
+    if (!nome || nome.length > 120 || (logo && !/^https:\/\//i.test(logo)) || !hex(primary) || !hex(background) || !hex(text)) fail('Controlla nome, logo HTTPS e colori esadecimali.');
+    const { error } = await db.from('tenant_branding').update({nome, logo_url: logo || null, primary_color: primary, background_color: background, text_color: text}).eq('tenant_id', tenant);
+    if (error) fail('Personalizzazione non salvata. Riprova.');
   } else fail('Operazione non valida.');
   revalidatePath(path);
   redirect(`${path}?saved=1`);
