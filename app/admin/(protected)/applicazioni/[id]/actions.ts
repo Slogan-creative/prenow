@@ -50,5 +50,6 @@ export async function saveSettings(form: FormData) {
     if (error) fail('Personalizzazione non salvata. Riprova.');
   } else fail('Operazione non valida.');
   revalidatePath(path);
+  if(form.get('kind')==='branding') revalidatePath('/cliente','layout');
   redirect(`${path}?saved=1`);
 }
