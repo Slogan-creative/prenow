@@ -22,7 +22,7 @@ export default async function CustomerHome({params}:{params:Promise<{slug:string
 
  return <main className="claude-home">
   <section className="customer-hero">
-   {logo?<img className="brand-logo" src={logo} alt={cat.nome} width={360} height={160}/>:<div className="customer-wordmark">{cat.nome}</div>}
+   {logo?<img className="brand-logo" src={logo} alt={cat.nome} width={280} height={125}/>:<div className="customer-wordmark">{cat.nome}</div>}
    <h1>Prenota il tuo<br/>appuntamento</h1>
    <p>Taglio, barba e cura del dettaglio. Scegli servizio, professionista e orario.</p>
    <Link className="claude-primary" href={`/cliente/${slug}/prenota`}>Prenota ora</Link>
