@@ -1,97 +1,55 @@
 'use server';
-
-import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
 import { requirePlatformAdmin } from '@/lib/auth';
 import { createServerClient } from '@/lib/supabase/server';
-import {
-  requiredName,
-  serviceDuration,
-  servicePrice,
-  entityId,
-  assignmentIds,
-} from '@/lib/management-validation';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
-export async function saveResource(form: FormData) {
+export async function saveSettings(form: FormData) {
   await requirePlatformAdmin();
-
-  let tenant: string;
-
-  try {
-    tenant = entityId(form.get('tenant'));
-  } catch {
-    redirect('/admin/applicazioni');
-  }
-
-  const path = `/admin/applicazioni/${tenant}/gestione`;
-
-  const fail = (message: string): never =>
-    redirect(`${path}?error=${encodeURIComponent(message)}`);
-
-  let input: {
-    p_tenant: string;
-    p_kind: string;
-    p_id: string | null;
-    p_name: string;
-    p_active: boolean;
-    p_duration: number | null;
-    p_price: number | null;
-    p_services: string[];
-  };
-
-  try {
-    const kind = form.get('kind');
-
-    if (kind !== 'service' && kind !== 'operator') {
-      throw new Error('Operazione non valida.');
-    }
-
-    const rawId = form.get('id');
-
-    input = {
-      p_tenant: tenant,
-      p_kind: kind,
-      p_id: rawId ? entityId(rawId) : null,
-      p_name: requiredName(form.get('nome')),
-      p_active: form.get('attivo') === 'on',
-      p_duration:
-        kind === 'service'
-          ? serviceDuration(form.get('durata'))
-          : null,
-      p_price:
-        kind === 'service'
-          ? servicePrice(form.get('prezzo'))
-          : null,
-      p_services:
-        kind === 'operator'
-          ? assignmentIds(form.getAll('services'))
-          : [],
-    };
-  } catch (error) {
-    fail(
-      error instanceof Error
-        ? error.message
-        : 'Controlla i dati inseriti.',
-    );
-  }
-
+  const tenant = String(form.get('tenant'));
+  const path = `/admin/applicazioni/${tenant}`;
+  const fail = (message: string): never => redirect(`${path}?error=${encodeURIComponent(message)}`);
+  if (!/^[0-9a-f-]{36}$/i.test(tenant)) redirect('/admin/applicazioni');
   const db = await createServerClient();
-  const { data, error } = await db.rpc(
-    'prenow_manage_resource',
-    input!,
-  );
-
-  if (error || !data) {
-    fail(
-      error?.code === 'PGRST202'
-        ? 'Configurazione mancante: esegui setup/management.sql.'
-        : 'Salvataggio non riuscito. Riprova; se persiste, verifica i log Supabase.',
-    );
-  }
-
+  const { data: owner, error: ownerError } = await db.from('tenants').select('id').eq('id', tenant).maybeSingle();
+  if (ownerError || !owner) fail('Applicazione non disponibile.');
+  const id = String(form.get('id'));
+  if (form.get('kind') === 'service') {
+    const nome = String(form.get('nome') || '').trim();
+    const durata = Number(form.get('durata'));
+    const raw = String(form.get('prezzo') || '').trim().replace(',', '.');
+    if (!nome || nome.length > 120 || !Number.isInteger(durata) || durata <= 0 || durata > 1440 || durata % 15) fail('Controlla nome e durata: usa multipli di 15 minuti.');
+    if (raw && (!/^\d+(\.\d{1,2})?$/.test(raw) || Number(raw) > 100000)) fail('Inserisci un prezzo valido con massimo due decimali.');
+    const { data, error } = await db.from('services').update({nome, durata_min: durata, prezzo_centesimi: raw ? Math.round(Number(raw)*100) : null, attivo: form.get('attivo') === 'on', updated_at: new Date().toISOString()}).eq('tenant_id', tenant).eq('id', id).select('id');
+    if (error || !data?.length) fail('Servizio non salvato. Riprova.');
+  } else if (form.get('kind') === 'hours') {
+    const chiuso = form.get('chiuso') === 'on';
+    const fasce: {da:string; a:string}[] = [];
+    if (!chiuso) for (let i=0; i<2; i++) {
+      const da = String(form.get(`da${i}`) || '');
+      const a = String(form.get(`a${i}`) || '');
+      if (!da && !a) continue;
+      if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(da) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(a) || da >= a) fail('Ogni fascia deve avere un inizio precedente alla fine.');
+      fasce.push({da,a});
+    }
+    fasce.sort((x,y)=>x.da.localeCompare(y.da));
+    if (!chiuso && (!fasce.length || (fasce.length === 2 && fasce[0].a > fasce[1].da))) fail('Inserisci almeno una fascia senza sovrapposizioni.');
+    const {data,error} = await db.from('business_hours').update({chiuso,fasce}).eq('tenant_id',tenant).eq('id',id).is('operator_id',null).select('id');
+    if (error || !data?.length) fail('Orario non salvato. Riprova.');
+  } else if (form.get('kind') === 'branding') {
+    const nome = String(form.get('nome') || '').trim();
+    const logo = String(form.get('logo_url') || '').trim();
+    const primary = String(form.get('primary_color') || '').trim();
+    const background = String(form.get('background_color') || '').trim();
+    const text = String(form.get('text_color') || '').trim();
+    const hex = (v: string) => /^#[0-9a-f]{6}$/i.test(v);
+    if (!nome || nome.length > 120 || (logo && !/^https:\/\//i.test(logo)) || !hex(primary) || !hex(background) || !hex(text)) fail('Controlla nome, logo HTTPS e colori esadecimali.');
+    const { error: tenantError } = await db.from('tenants').update({nome}).eq('id', tenant);
+    if (tenantError) fail('Nome applicazione non salvato. Riprova.');
+    const { error } = await db.from('tenant_branding').update({logo_url: logo || null, color_primary: primary, color_bg: background, color_text: text}).eq('tenant_id', tenant);
+    if (error) fail('Personalizzazione non salvata. Riprova.');
+  } else fail('Operazione non valida.');
   revalidatePath(path);
-  revalidatePath(`/admin/applicazioni/${tenant}`);
-  revalidatePath('/cliente', 'layout');
-
+  if(form.get('kind')==='branding') revalidatePath('/cliente','layout');
   redirect(`${path}?saved=1`);
 }
