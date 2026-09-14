@@ -21,7 +21,7 @@ Usare utenti e dati fittizi.
 ## Dipendenze ancora non completate
 - Invio reale di conferme e reminder: scegliere/configurare provider email, mittente, credenziali, scheduler e retries.
 - Domini: confermare dominio posseduto, DNS, alias Vercel e risoluzione tenant verificata. Nessun DNS modificato.
-- Staff: cancellazione/completamento/no-show implementati; inserimento e riprogrammazione da area staff ancora da completare.
+- Staff: inserimento manuale e aggiornamento stato implementati; collaudo dei permessi e delle richieste simultanee necessario.
 - Icone PNG 192/512 personalizzate e compatibilità completa PWA da verificare; icona SVG generica disponibile.
 ## Verifiche automatiche
 npm ci

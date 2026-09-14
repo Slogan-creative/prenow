@@ -18,9 +18,13 @@ grant execute on function public.prenow_create_application(text,text) to authent
 
 create or replace function public.prenow_staff_book(p_tenant uuid,p_service uuid,p_operator uuid,p_start timestamptz,p_customer uuid,p_note text)
 returns uuid language plpgsql security definer set search_path='' as $$
-declare result uuid; salon_slug text; duration integer;
+declare result uuid; salon_slug text; duration integer; member_role text;
 begin
- if auth.uid() is null or not coalesce(public.is_platform_admin(),false) then raise exception 'Accesso non autorizzato';end if;
+ if auth.uid() is null then raise exception 'Accesso non autorizzato';end if;
+ if not coalesce(public.is_platform_admin(),false) then
+ select ruolo into member_role from public.tenant_users where tenant_id=p_tenant and user_id=auth.uid() for share;
+ if member_role is null or member_role not in ('tenant_admin','staff') then raise exception 'Accesso non autorizzato';end if;
+ end if;
  if p_start is null or p_customer is null or length(coalesce(p_note,''))>1000 then raise exception 'Dati non validi';end if;
  select slug into salon_slug from public.tenants where id=p_tenant;
  if salon_slug is null then raise exception 'Salone non disponibile';end if;
