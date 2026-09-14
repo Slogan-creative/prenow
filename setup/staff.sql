@@ -38,4 +38,26 @@ begin
 end $$;
 revoke all on function public.prenow_staff_agenda(text,date) from public,anon;
 grant execute on function public.prenow_staff_agenda(text,date) to authenticated;
+create or replace function public.prenow_staff_set_status(p_slug text,p_booking uuid,p_status text)
+returns uuid language plpgsql security definer set search_path='' as $
+declare t uuid; member_role text; changed uuid;
+begin
+ if auth.uid() is null then raise exception 'Accesso non autorizzato';end if;
+ select id into t from public.tenants where slug=p_slug;
+ if t is null then raise exception 'Salone non disponibile';end if;
+ if not coalesce(public.is_platform_admin(),false) then
+  select ruolo into member_role from public.tenant_users where tenant_id=t and user_id=auth.uid() for share;
+  if member_role is null or member_role not in ('tenant_admin','staff') then raise exception 'Accesso non autorizzato';end if;
+ end if;
+ if p_status is null or p_status not in ('cancellato_negozio','completato','no_show') then raise exception 'Stato non valido';end if;
+ update public.appointments set stato=p_status,updated_at=now()
+ where id=p_booking and tenant_id=t and stato='confermato'
+ and (p_status='cancellato_negozio' or end_at<=now())
+ returning id into changed;
+ if changed is null then raise exception 'Appuntamento già cambiato o non ancora terminato';end if;
+ return changed;
+end $;
+revoke all on function public.prenow_staff_set_status(text,uuid,text) from public,anon;
+grant execute on function public.prenow_staff_set_status(text,uuid,text) to authenticated;
+
 commit;

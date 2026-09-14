@@ -15,12 +15,13 @@ Usare utenti e dati fittizi.
 - Disponibilità: chiusura totale/parziale, assenza, blocco generale e individuale; rimozione confermata.
 - Prenotazione manuale: cliente del salone; slot assegnato; due richieste simultanee producono un solo appuntamento.
 - Staff: registrazione preesistente; associazione, modifica e revoca; operatore vede solo propria agenda.
+- Staff: staff/responsabile cambia solo appuntamenti del proprio salone; operatore non può cambiare stati; completamento/no-show vietati prima della fine; doppio invio non sovrascrive stati già cambiati.
 - Staff: test API dirette, non solo interfaccia; nessun accesso cross-tenant.
 - PWA: manifest valido, installazione su Chrome/Safari, avvio standalone, nessuna cache di dati privati.
 ## Dipendenze ancora non completate
 - Invio reale di conferme e reminder: scegliere/configurare provider email, mittente, credenziali, scheduler e retries.
 - Domini: confermare dominio posseduto, DNS, alias Vercel e risoluzione tenant verificata. Nessun DNS modificato.
-- Area staff iniziale: agenda in lettura; gestione appuntamenti da parte dello staff non ancora abilitata.
+- Staff: cancellazione/completamento/no-show implementati; inserimento e riprogrammazione da area staff ancora da completare.
 - Icone PNG 192/512 personalizzate e compatibilità completa PWA da verificare; icona SVG generica disponibile.
 ## Verifiche automatiche
 npm ci
