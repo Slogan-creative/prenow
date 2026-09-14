@@ -159,3 +159,4 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .log-item{display:flex;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:13px;}
 .log-item:last-child{border-bottom:none;}
 .log-time{color:var(--text-faint);font-size:11.5px;white-space:nowrap;width:120px;flex-shrink:0;}
+.booking{max-width:680px;margin:0 auto;padding:28px 20px;}.booking>.settings-card{margin:24px 0;}.booking p{line-height:1.6;color:var(--text-muted);}

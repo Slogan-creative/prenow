@@ -32,3 +32,7 @@ npm run dev
 
 ## Gestione applicazioni
 Da Applicazioni, cliccare sul nome del salone. Si possono modificare i servizi esistenti (nome, prezzo, durata, attivazione) e le fasce orarie esistenti, salvando ogni scheda separatamente. Non richiede SQL aggiuntivo. Creazione nuovi servizi, gestione operatori e prenotazioni non incluse in questo aggiornamento.
+
+
+## Prenotazione di collaudo
+Nuovo flusso /prenota/venus riservato al Super Admin, raggiungibile da Applicazioni → Prova prenotazione. Eseguire UNA volta setup/booking-test.sql nel SQL Editor del progetto già configurato. La query è rieseguibile, non cancella dati né modifica le policy esistenti. Disponibilità entro 60 giorni in Europe/Rome; durata, associazioni operatore-servizio, chiusure, assenze, blocchi e appuntamenti occupati verificati nel database. Salvataggio reale, con nota Collaudo Prenow. Usare dati di prova. Le informazioni di clienti esistenti non vengono sovrascritte. Nessun invio email, account cliente, cronologia, cancellazione cliente, installazione PWA o accesso pubblico inclusi in questa versione. La compilazione applicativa è verificata; la query e il flusso reale devono essere collaudati in Supabase prima di aprire l'accesso ai clienti.
