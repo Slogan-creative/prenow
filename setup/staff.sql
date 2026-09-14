@@ -39,7 +39,7 @@ end $$;
 revoke all on function public.prenow_staff_agenda(text,date) from public,anon;
 grant execute on function public.prenow_staff_agenda(text,date) to authenticated;
 create or replace function public.prenow_staff_set_status(p_slug text,p_booking uuid,p_status text)
-returns uuid language plpgsql security definer set search_path='' as $
+returns uuid language plpgsql security definer set search_path='' as $$
 declare t uuid; member_role text; changed uuid;
 begin
  if auth.uid() is null then raise exception 'Accesso non autorizzato';end if;
@@ -56,7 +56,7 @@ begin
  returning id into changed;
  if changed is null then raise exception 'Appuntamento già cambiato o non ancora terminato';end if;
  return changed;
-end $;
+end $$;
 revoke all on function public.prenow_staff_set_status(text,uuid,text) from public,anon;
 grant execute on function public.prenow_staff_set_status(text,uuid,text) to authenticated;
 
