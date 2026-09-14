@@ -40,3 +40,7 @@ Nuovo flusso /prenota/venus riservato al Super Admin, raggiungibile da Applicazi
 
 ## Elenco appuntamenti
 Menu Appuntamenti: elenco con filtri per applicazione e stato, 25 risultati per pagina e orari Europe/Rome. Il Super Admin può cancellare un appuntamento confermato dopo aver selezionato la conferma; lo storico rimane nel database. Non serve SQL aggiuntivo per questo aggiornamento.
+
+
+## Area clienti — prove
+Eseguire setup/customer-access.sql una volta nel SQL Editor; non modifica le policy delle tabelle. /cliente/venus/login: registrazione e login email/password. /cliente/venus: prossimi appuntamenti e storico, cancellazione confermata prima dell'inizio. /cliente/venus/prenota: prenotazione legata al proprio auth.uid(), con email confermata. Ogni funzione verifica l'identità; nessuna lettura diretta delle tabelle clienti è concessa. Catalogo e disponibilità sono accessibili solo dopo login. Il profilo di un cliente già esistente non viene collegato automaticamente per email: per questo caso sarà necessaria una funzione di collegamento nel gestionale. Configurare Supabase Authentication → URL Configuration: Site URL https://prenow.vercel.app e Redirect URL https://prenow.vercel.app/cliente/venus/login. Per collaudare senza sostituire la sessione admin, usare una finestra in incognito e un nuovo account con email accessibile. Nessuna notifica appuntamento, recupero password, privacy personalizzata o PWA installabile inclusi. Compilazione verificata; query e accesso cliente da verificare online.
