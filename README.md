@@ -36,3 +36,7 @@ Da Applicazioni, cliccare sul nome del salone. Si possono modificare i servizi e
 
 ## Prenotazione di collaudo
 Nuovo flusso /prenota/venus riservato al Super Admin, raggiungibile da Applicazioni → Prova prenotazione. Eseguire UNA volta setup/booking-test.sql nel SQL Editor del progetto già configurato. La query è rieseguibile, non cancella dati né modifica le policy esistenti. Disponibilità entro 60 giorni in Europe/Rome; durata, associazioni operatore-servizio, chiusure, assenze, blocchi e appuntamenti occupati verificati nel database. Salvataggio reale, con nota Collaudo Prenow. Usare dati di prova. Le informazioni di clienti esistenti non vengono sovrascritte. Nessun invio email, account cliente, cronologia, cancellazione cliente, installazione PWA o accesso pubblico inclusi in questa versione. La compilazione applicativa è verificata; la query e il flusso reale devono essere collaudati in Supabase prima di aprire l'accesso ai clienti.
+
+
+## Elenco appuntamenti
+Menu Appuntamenti: elenco con filtri per applicazione e stato, 25 risultati per pagina e orari Europe/Rome. Il Super Admin può cancellare un appuntamento confermato dopo aver selezionato la conferma; lo storico rimane nel database. Non serve SQL aggiuntivo per questo aggiornamento.

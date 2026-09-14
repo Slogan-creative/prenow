@@ -3,11 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-// Ogni voce corrisponde a una cartella sotto app/admin/. In questa prima fase
-// solo "dashboard" e "applicazioni" hanno una pagina reale: le altre
-// puntano a route non ancora create di proposito — vedi ARCHITETTURA.md
-// per l'elenco di cosa manca e perché.
-const NAV_ITEMS = [{ href: '/admin', label: 'Dashboard' }, { href: '/admin/applicazioni', label: 'Applicazioni' }];
+const NAV_ITEMS = [{ href: '/admin', label: 'Dashboard' }, { href: '/admin/applicazioni', label: 'Applicazioni' }, { href: '/admin/appuntamenti', label: 'Appuntamenti' }];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
