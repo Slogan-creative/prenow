@@ -169,3 +169,31 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .customer-brand a{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);font-size:18px;font-weight:700;overflow-wrap:anywhere;}
 .customer-brand img{display:block;object-fit:contain;flex-shrink:0;}
 @media(max-width:480px){.customer-brand{padding:20px 16px 0;}}
+
+/* Customer-only polish: preserve the admin dashboard. */
+.customer-ui{min-height:100dvh;padding-bottom:env(safe-area-inset-bottom);}
+.customer-ui .booking{width:100%;padding-top:24px;}
+.customer-ui h1{overflow-wrap:anywhere;margin-top:12px;margin-bottom:20px;}
+.customer-ui .settings-card{box-shadow:0 10px 30px rgba(0,0,0,.08);}
+.customer-ui .btn:focus-visible,.customer-ui a:focus-visible,.customer-ui summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px;}
+.customer-ui .btn:disabled{cursor:not-allowed;}
+.customer-ui .booking>section>h2{margin-top:30px;}
+.customer-ui .booking article h3{margin-bottom:12px;line-height:1.45;}
+.customer-ui .booking [role=alert]{padding:14px 16px;border:1px solid var(--danger);border-radius:12px;}
+.customer-ui .booking [role=status]{padding:14px 16px;border:1px solid var(--accent);border-radius:12px;}
+.customer-ui .customer-install{max-width:720px;margin:0 auto;padding:0 20px 28px;color:var(--text-muted);font-size:14px;}
+.customer-ui .customer-install details{border-top:1px solid var(--border);}
+.customer-ui .customer-install p{line-height:1.6;}
+.customer-ui .customer-install .btn{width:100%;margin-bottom:12px;}
+.customer-ui .booking .toolbar form{display:flex;align-items:stretch;}
+.customer-ui .booking-summary dd{overflow-wrap:anywhere;}
+@media(max-width:480px){
+ .customer-ui .field-row{grid-template-columns:1fr;gap:0;}
+ .customer-ui .booking .toolbar{gap:12px;}
+ .customer-ui .booking .toolbar>.btn{flex-basis:100%;}
+ .customer-ui .booking .toolbar form{width:100%;}
+ .customer-ui .booking .toolbar form .btn{width:100%;}
+ .customer-ui .customer-install{padding:0 16px 24px;}
+ .customer-ui .customer-brand a{font-size:16px;}
+}
+@media(prefers-reduced-motion:reduce){.customer-ui *{scroll-behavior:auto!important;transition:none!important;animation:none!important;}}
