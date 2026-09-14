@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
 
 // Login reale: password verificata da Supabase Auth (hash sicuro, gestito da
@@ -10,7 +9,6 @@ import { createBrowserSupabaseClient } from '@/lib/supabase/client';
 // se questa persona può entrare in /admin — un login riuscito non basta da
 // solo, deve anche avere una riga in platform_admins.
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errore, setErrore] = useState<string | null>(null);
@@ -18,17 +16,28 @@ export default function AdminLoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (caricamento) return;
     setErrore(null);
     setCaricamento(true);
+    try {
     const supabase = createBrowserSupabaseClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setCaricamento(false);
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) {
       setErrore('Email o password non corretti.');
+      setCaricamento(false);
       return;
     }
-    router.push('/admin');
-    router.refresh(); // forza il layout server a rileggere la sessione
+    if (!data.session) {
+      setErrore('Sessione non disponibile. Riprova.');
+      setCaricamento(false);
+      return;
+    }
+    // Richiesta completa con i cookie appena salvati, senza cache del router.
+    window.location.replace('/admin');
+    } catch {
+      setErrore('Collegamento non disponibile. Riprova.');
+      setCaricamento(false);
+    }
   }
 
   return (
