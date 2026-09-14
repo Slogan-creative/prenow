@@ -231,7 +231,7 @@ table.data-table tr:hover td{background:var(--surface-2);}
 /* Home */
 .customer-ui .claude-home{padding:56px 28px 18px}
 .customer-ui .customer-hero{text-align:center}
-.customer-ui .brand-logo{max-width:360px;width:94%;margin:0 auto;display:block;height:auto;object-fit:contain}
+.customer-ui .brand-logo{max-width:280px;width:82%;margin:0 auto;display:block;height:auto;object-fit:contain}
 .customer-ui .brand-logo+h1{margin-top:30px}
 .customer-ui .customer-wordmark{font-size:32px;text-transform:uppercase;letter-spacing:4px;margin:34px 0}
 .customer-ui .customer-hero h1{font-size:46px;line-height:1.08;margin:0}
