@@ -1,7 +1,6 @@
 'use client';
 
 import {useState} from 'react';
-import Link from 'next/link';
 import {createBrowserSupabaseClient} from '@/lib/supabase/client';
 
 type Props={slug:string;logo:string|null};
@@ -76,7 +75,7 @@ export default function LoginForm({slug,logo}:Props){
 
  return <main className="claude-page login-page">
   <header className="claude-titlebar">
-   <Link href={`/cliente/${slug}`} className="round-back" aria-label="Torna alla home">‹</Link>
+   <button type="button" className="round-back" aria-label="Torna alla home" onClick={()=>window.location.assign(`/cliente/${encodeURIComponent(slug)}`)}>‹</button>
    <h1>{signup?'Registrati':'Accedi'}</h1>
   </header>
   <section className="login-content">
