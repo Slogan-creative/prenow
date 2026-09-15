@@ -4,10 +4,10 @@ import {usePathname} from 'next/navigation';
 import type {OwnerRole} from '@/lib/owner-auth';
 
 const items=[
- {part:'',label:'Dashboard',icon:'⌂',roles:['tenant_admin','manager','operator']},
- {part:'agenda',label:'Agenda',icon:'▣',roles:['tenant_admin','manager','operator']},
- {part:'prenota',label:'Prenota',icon:'＋',roles:['tenant_admin','manager']},
- {part:'clienti',label:'Clienti',icon:'♙',roles:['tenant_admin','manager']},
+ {part:'',label:'Dashboard',icon:'⌂',roles:['tenant_admin','staff','operator']},
+ {part:'agenda',label:'Agenda',icon:'▣',roles:['tenant_admin','staff','operator']},
+ {part:'prenota',label:'Prenota',icon:'＋',roles:['tenant_admin','staff']},
+ {part:'clienti',label:'Clienti',icon:'♙',roles:['tenant_admin','staff']},
  {part:'operatori',label:'Operatori',icon:'◎',roles:['tenant_admin']},
  {part:'impostazioni',label:'Impostazioni',icon:'⚙',roles:['tenant_admin']}
 ] as const;
