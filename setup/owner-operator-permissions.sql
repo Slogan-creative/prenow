@@ -1,9 +1,8 @@
 begin;
 
 alter table public.tenant_users add column if not exists attivo boolean not null default true;
-update public.tenant_users set ruolo='manager' where ruolo='staff';
 alter table public.tenant_users drop constraint if exists tenant_users_ruolo_check;
-alter table public.tenant_users add constraint tenant_users_ruolo_check check (ruolo in ('tenant_admin','manager','operator'));
+alter table public.tenant_users add constraint tenant_users_ruolo_check check (ruolo in ('tenant_admin','staff','operator'));
 create unique index if not exists tenant_users_tenant_email_key on public.tenant_users(tenant_id,lower(email)) where email is not null;
 do $$ begin
  if not exists(select 1 from pg_constraint where conname='tenant_users_operator_id_fkey') then
@@ -29,7 +28,7 @@ begin
  select id,nome into t,n from public.tenants where slug=p_slug;
  if t is null then raise exception 'Attività non disponibile';end if;
  if coalesce(public.is_platform_admin(),false) then r:='tenant_admin'; else select ruolo,operator_id into r,op from public.tenant_users where tenant_id=t and user_id=auth.uid() and attivo=true; end if;
- if r is null or r not in ('tenant_admin','manager','operator') then raise exception 'Accesso non autorizzato';end if;
+ if r is null or r not in ('tenant_admin','staff','operator') then raise exception 'Accesso non autorizzato';end if;
  if r='operator' and op is null then raise exception 'Operatore non collegato';end if;
  return jsonb_build_object('tenant_id',t,'nome',n,'slug',p_slug,'role',r,'operator_id',op);
 end $$;
@@ -54,7 +53,7 @@ begin
  ctx:=public.prenow_owner_context(p_slug);
  if ctx->>'role'<>'tenant_admin' then raise exception 'Solo il titolare può gestire gli accessi';end if;
  t:=(ctx->>'tenant_id')::uuid; normalized_email:=lower(trim(coalesce(p_email,'')));
- if length(trim(coalesce(p_name,''))) not between 1 and 120 or normalized_email='' or normalized_email !~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$' or p_role not in ('manager','operator') or p_active is null then raise exception 'Dati non validi';end if;
+ if length(trim(coalesce(p_name,''))) not between 1 and 120 or normalized_email='' or normalized_email !~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$' or p_role not in ('staff','operator') or p_active is null then raise exception 'Dati non validi';end if;
  if exists(select 1 from unnest(service_ids) x where not exists(select 1 from public.services s where s.id=x and s.tenant_id=t)) then raise exception 'Servizio non valido';end if;
  select id into uid from auth.users where lower(email)=normalized_email limit 1; oid:=p_operator_id;
  if oid is null then
