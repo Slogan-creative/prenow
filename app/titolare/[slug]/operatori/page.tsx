@@ -4,7 +4,7 @@ import {saveStaffAccess} from './actions';
 
 export const dynamic='force-dynamic';
 type Service={id:string;nome:string};
-type Member={id:string;user_id:string|null;nome:string;cognome:string|null;email:string;telefono:string|null;ruolo:'manager'|'operator';attivo:boolean;operator_id:string|null;services:string[]};
+type Member={id:string;user_id:string|null;nome:string;cognome:string|null;email:string;telefono:string|null;ruolo:'staff'|'operator';attivo:boolean;operator_id:string|null;services:string[]};
 
 export default async function OperatorsPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{saved?:string;error?:string}>}){
  const {slug}=await params,q=await searchParams,ctx=await requireTenantAdmin(slug),db=await createServerClient();
@@ -26,9 +26,9 @@ function StaffForm({slug,services,member}:{slug:string;services:Service[];member
  return <form action={saveStaffAccess} className="owner-staff-card">
   <div className="owner-staff-card-head"><div className="owner-staff-avatar">{(member?.nome||'N').charAt(0)}</div><div><h3>{member?member.nome+' '+(member.cognome||''):'Nuovo operatore'}</h3>{member&&<span className={member.user_id?'access-active':'access-pending'}>{member.user_id?'Accesso attivo':'Registrazione in attesa'}</span>}</div></div>
   <input type="hidden" name="slug" value={slug}/><input type="hidden" name="membership_id" value={member?.id||''}/><input type="hidden" name="operator_id" value={member?.operator_id||''}/>
-  <div className="owner-form-grid"><label>Nome<input name="nome" defaultValue={member?.nome||''} required/></label><label>Cognome<input name="cognome" defaultValue={member?.cognome||''}/></label><label>Email di accesso<input name="email" type="email" defaultValue={member?.email||''} required/></label><label>Telefono<input name="telefono" defaultValue={member?.telefono||''}/></label><label>Permessi<select name="ruolo" defaultValue={member?.ruolo||'operator'}><option value="operator">Operatore semplice</option><option value="manager">Gestione operativa</option></select></label><label className="check"><input name="attivo" type="checkbox" defaultChecked={member?.attivo??true}/> Accesso e operatore attivi</label></div>
+  <div className="owner-form-grid"><label>Nome<input name="nome" defaultValue={member?.nome||''} required/></label><label>Cognome<input name="cognome" defaultValue={member?.cognome||''}/></label><label>Email di accesso<input name="email" type="email" defaultValue={member?.email||''} required/></label><label>Telefono<input name="telefono" defaultValue={member?.telefono||''}/></label><label>Permessi<select name="ruolo" defaultValue={member?.ruolo||'operator'}><option value="operator">Operatore semplice</option><option value="staff">Gestione operativa</option></select></label><label className="check"><input name="attivo" type="checkbox" defaultChecked={member?.attivo??true}/> Accesso e operatore attivi</label></div>
   <fieldset className="owner-service-checks"><legend>Servizi eseguibili</legend>{services.map(service=><label key={service.id}><input type="checkbox" name="services" value={service.id} defaultChecked={!member||assigned.has(service.id)}/><span>{service.nome}</span></label>)}</fieldset>
-  <div className="owner-permission-note">{(member?.ruolo||'operator')==='manager'?'Può gestire agenda, clienti e prenotazioni. Non può modificare impostazioni o permessi.':'Può vedere esclusivamente la propria agenda e i propri appuntamenti.'}</div>
+  <div className="owner-permission-note">{(member?.ruolo||'operator')==='staff'?'Può gestire agenda, clienti e prenotazioni. Non può modificare impostazioni o permessi.':'Può vedere esclusivamente la propria agenda e i propri appuntamenti.'}</div>
   <button className="owner-primary">{member?'Salva modifiche':'Aggiungi collaboratore'}</button>
  </form>;
 }
