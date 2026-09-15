@@ -35,14 +35,20 @@ end $$;
 revoke all on function public.prenow_owner_context(text) from public,anon;
 grant execute on function public.prenow_owner_context(text) to authenticated;
 
-create or replace function public.prenow_owner_staff(p_slug text) returns jsonb language plpgsql stable security definer set search_path='' as $$
+create or replace function public.prenow_owner_staff(p_slug text) returns jsonb language plpgsql stable security definer set search_path='' as $
 declare ctx jsonb;t uuid;
 begin
  ctx:=public.prenow_owner_context(p_slug);
- if ctx->>'role'<>'tenant_admin' then raise exception 'Solo il titolare può gestire gli accessi';end if;
+ if ctx->>'role' not in ('tenant_admin','staff') then raise exception 'Accesso non autorizzato';end if;
  t:=(ctx->>'tenant_id')::uuid;
- return coalesce((select jsonb_agg(jsonb_build_object('id',tu.id,'user_id',tu.user_id,'nome',tu.nome,'cognome',tu.cognome,'email',tu.email,'telefono',tu.telefono,'ruolo',tu.ruolo,'attivo',tu.attivo,'operator_id',tu.operator_id,'services',coalesce((select jsonb_agg(os.service_id) from public.operator_services os where os.operator_id=tu.operator_id),'[]'::jsonb)) order by tu.created_at) from public.tenant_users tu where tu.tenant_id=t),'[]'::jsonb);
-end $$;
+ return coalesce((select jsonb_agg(jsonb_build_object(
+  'id',o.id,'operator_id',o.id,'membership_id',tu.id,'user_id',tu.user_id,
+  'nome',o.nome,'cognome',o.cognome,'email',coalesce(tu.email,o.email),'telefono',coalesce(tu.telefono,o.telefono),
+  'ruolo',coalesce(tu.ruolo,'operator'),'attivo',o.attivo and coalesce(tu.attivo,true),
+  'services',coalesce((select jsonb_agg(os.service_id) from public.operator_services os where os.operator_id=o.id),'[]'::jsonb),
+  'absence_count',(select count(*) from public.operator_absences oa where oa.operator_id=o.id and oa.data_fine>=current_date)
+ ) order by o.nome,o.cognome) from public.operators o left join public.tenant_users tu on tu.tenant_id=t and tu.operator_id=o.id where o.tenant_id=t),'[]'::jsonb);
+end $;
 revoke all on function public.prenow_owner_staff(text) from public,anon;
 grant execute on function public.prenow_owner_staff(text) to authenticated;
 
@@ -81,7 +87,7 @@ declare ctx jsonb;t uuid;title text;role_name text;own_operator uuid;
 begin
  ctx:=public.prenow_owner_context(p_slug);t:=(ctx->>'tenant_id')::uuid;role_name:=ctx->>'role';own_operator:=nullif(ctx->>'operator_id','')::uuid;
  select nome into title from public.tenants where id=t;
- return jsonb_build_object('nome',title,'role',role_name,'appointments',coalesce((select jsonb_agg(jsonb_build_object('id',a.id,'start_at',a.start_at,'end_at',a.end_at,'stato',a.stato,'customer',c.nome||' '||coalesce(c.cognome,''),'operator',o.nome,'service',s.nome) order by a.start_at) from public.appointments a join public.customers c on c.id=a.customer_id and c.tenant_id=t join public.operators o on o.id=a.operator_id and o.tenant_id=t join public.services s on s.id=a.service_id and s.tenant_id=t where a.tenant_id=t and (a.start_at at time zone 'Europe/Rome')::date=p_date and (role_name<>'operator' or a.operator_id=own_operator)),'[]'::jsonb));
+ return jsonb_build_object('nome',title,'role',role_name,'appointments',coalesce((select jsonb_agg(jsonb_build_object('id',a.id,'start_at',a.start_at,'end_at',a.end_at,'stato',a.stato,'operator_id',a.operator_id,'customer',c.nome||' '||coalesce(c.cognome,''),'operator',o.nome,'service',s.nome) order by a.start_at) from public.appointments a join public.customers c on c.id=a.customer_id and c.tenant_id=t join public.operators o on o.id=a.operator_id and o.tenant_id=t join public.services s on s.id=a.service_id and s.tenant_id=t where a.tenant_id=t and (a.start_at at time zone 'Europe/Rome')::date=p_date and (role_name<>'operator' or a.operator_id=own_operator)),'[]'::jsonb));
 end $$;
 
 create or replace function public.prenow_owner_dashboard(p_slug text,p_date date) returns jsonb language plpgsql stable security definer set search_path='' as $$
