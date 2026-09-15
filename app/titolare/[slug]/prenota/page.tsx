@@ -1,2 +1,2 @@
 import {redirect} from 'next/navigation';import {requireTenantAccess} from '@/lib/owner-auth';
-export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;await requireTenantAccess(slug,['tenant_admin','manager']);redirect(`/staff/${encodeURIComponent(slug)}/prenotazione`)}
+export default async function Page({params}:{params:Promise<{slug:string}>}){const {slug}=await params;await requireTenantAccess(slug,['tenant_admin','staff']);redirect(`/staff/${encodeURIComponent(slug)}/prenotazione`)}
