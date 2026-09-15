@@ -370,8 +370,8 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .customer-ui .info-actions .claude-secondary{min-height:62px}
 
 /* Login */
-.customer-ui .login-content>h2{font-size:38px;margin:10px 0 4px}
-.customer-ui .login-content>p{font-size:18px}
+.customer-ui .login-content>h2{font-size:38px;margin:10px 0 4px;text-align:center}
+.customer-ui .login-content>p{font-size:18px;text-align:center}
 .customer-ui .form-card{padding:22px;margin:24px 0 16px}
 .customer-ui .form-card .claude-primary{margin-top:22px}
 .customer-ui .form-message{font-size:14px}
