@@ -1,10 +1,10 @@
 import {redirect} from 'next/navigation';
 import {createServerClient} from './supabase/server';
 
-export type OwnerRole='tenant_admin'|'manager'|'operator';
+export type OwnerRole='tenant_admin'|'staff'|'operator';
 export type OwnerContext={tenant_id:string;nome:string;slug:string;role:OwnerRole;operator_id:string|null};
 
-export async function requireTenantAccess(slug:string,allowed:OwnerRole[]=['tenant_admin','manager','operator']):Promise<OwnerContext>{
+export async function requireTenantAccess(slug:string,allowed:OwnerRole[]=['tenant_admin','staff','operator']):Promise<OwnerContext>{
  const db=await createServerClient();
  const {data:{user}}=await db.auth.getUser();
  const loginPath=`/titolare/${encodeURIComponent(slug)}/login`;
