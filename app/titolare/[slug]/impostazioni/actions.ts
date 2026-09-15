@@ -20,6 +20,11 @@ export async function saveOperator(form:FormData){
  const result=id?await db.from('operators').update(values).eq('id',id).eq('tenant_id',ctx.tenant_id):await db.from('operators').insert(values);if(result.error)redirect(`/titolare/${slug}/impostazioni?error=operator`);revalidatePath(`/titolare/${slug}`,'layout');redirect(`/titolare/${slug}/impostazioni?saved=operator#operatori`);
 }
 export async function saveHours(form:FormData){
- const slug=clean(form.get('slug'),48),ctx=await requireTenantAdmin(slug),db=await createServerClient(),id=clean(form.get('id'),36),chiuso=form.get('chiuso')==='on';const fasce=chiuso?[]:[0,1].map(i=>({da:clean(form.get(`da${i}`),5),a:clean(form.get(`a${i}`),5)})).filter(x=>x.da&&x.a);
- const {error}=await db.from('business_hours').update({chiuso,fasce}).eq('id',id).eq('tenant_id',ctx.tenant_id).is('operator_id',null);if(error)redirect(`/titolare/${slug}/impostazioni?error=hours`);revalidatePath(`/titolare/${slug}`,'layout');redirect(`/titolare/${slug}/impostazioni?saved=hours#orari`);
+ const slug=clean(form.get('slug'),48),ctx=await requireTenantAdmin(slug),db=await createServerClient(),id=clean(form.get('id'),36),chiuso=form.get('chiuso')==='on';
+ const starts=form.getAll('da').map(v=>clean(v,5)),ends=form.getAll('a').map(v=>clean(v,5));
+ const fasce=chiuso?[]:starts.map((da,i)=>({da,a:ends[i]||''})).filter(x=>/^\d{2}:\d{2}$/.test(x.da)&&/^\d{2}:\d{2}$/.test(x.a)&&x.da<x.a).slice(0,6);
+ if(!chiuso&&!fasce.length)redirect(`/titolare/${slug}/impostazioni?error=hours`);
+ const result=await db.from('business_hours').update({chiuso,fasce}).eq('id',id).eq('tenant_id',ctx.tenant_id).is('operator_id',null);
+ if(result.error)redirect(`/titolare/${slug}/impostazioni?error=hours`);
+ revalidatePath(`/titolare/${slug}/impostazioni`);redirect(`/titolare/${slug}/impostazioni?saved=hours`);
 }
