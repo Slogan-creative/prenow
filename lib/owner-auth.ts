@@ -17,3 +17,5 @@ export async function requireTenantAccess(slug:string,allowed:OwnerRole[]=['tena
 }
 
 export const requireTenantAdmin=(slug:string)=>requireTenantAccess(slug,['tenant_admin']);
+
+export const requireTenantManager=(slug:string)=>requireTenantAccess(slug,['tenant_admin','staff']);
