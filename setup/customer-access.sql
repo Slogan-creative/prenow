@@ -56,6 +56,107 @@ begin
  insert into public.appointments(tenant_id,customer_id,operator_id,service_id,start_at,end_at) values(t,customer,p_operator,p_service,p_start,p_start+make_interval(mins=>duration)) returning id into booking;
  return booking;
 end $$;
+create or replace function public.prenow_customer_book_guest(p_slug text,p_service uuid,p_operator uuid,p_start timestamptz,p_nome text,p_cognome text,p_email text,p_telefono text)
+returns uuid language plpgsql security definer set search_path='' as $
+declare t uuid; duration integer; customer uuid; booking uuid; v_email text; u uuid;
+begin
+ u:=auth.uid();
+ if u is null or coalesce((auth.jwt()->>'is_anonymous')::boolean,false) is not true then
+  raise exception 'Sessione ospite non valida';
+ end if;
+ v_email:=lower(trim(coalesce(p_email,'')));
+ if length(v_email) not between 5 and 320 or v_email !~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+
+returns jsonb language plpgsql stable security definer set search_path='' as $$
+declare result jsonb;
+begin
+ if auth.uid() is null then raise exception 'Accesso non autorizzato'; end if;
+ select coalesce(jsonb_agg(jsonb_build_object('id',a.id,'start',a.start_at,'end',a.end_at,'stato',a.stato,'service',s.nome,'operator',o.nome) order by a.start_at desc),'[]') into result from public.appointments a join public.customers c on c.id=a.customer_id and c.tenant_id=a.tenant_id join public.tenants t on t.id=a.tenant_id join public.services s on s.id=a.service_id join public.operators o on o.id=a.operator_id where c.user_id=auth.uid() and t.slug=p_slug;
+ return result;
+end $$;
+create or replace function public.prenow_customer_cancel(p_slug text,p_booking uuid)
+returns boolean language plpgsql security definer set search_path='' as $$
+begin
+ if auth.uid() is null then raise exception 'Accesso non autorizzato'; end if;
+ update public.appointments a set stato='cancellato_cliente',updated_at=now() from public.customers c,public.tenants t where a.id=p_booking and a.customer_id=c.id and c.tenant_id=a.tenant_id and t.id=a.tenant_id and t.slug=p_slug and c.user_id=auth.uid() and a.stato='confermato' and a.start_at>now();
+ return found;
+end $$;
+revoke all on function public.prenow_customer_catalog(text) from public,anon;
+revoke all on function public.prenow_customer_slots(text,uuid,uuid,date) from public,anon;
+revoke all on function public.prenow_customer_book(text,uuid,uuid,timestamptz,text,text,text) from public,anon;
+revoke all on function public.prenow_customer_book_guest(text,uuid,uuid,timestamptz,text,text,text,text) from public,anon;
+revoke all on function public.prenow_customer_appointments(text) from public,anon;
+revoke all on function public.prenow_customer_cancel(text,uuid) from public,anon;
+grant execute on function public.prenow_customer_catalog(text) to authenticated;
+grant execute on function public.prenow_customer_slots(text,uuid,uuid,date) to authenticated;
+grant execute on function public.prenow_customer_book(text,uuid,uuid,timestamptz,text,text,text) to authenticated;
+grant execute on function public.prenow_customer_book_guest(text,uuid,uuid,timestamptz,text,text,text,text) to authenticated;
+grant execute on function public.prenow_customer_appointments(text) to authenticated;
+grant execute on function public.prenow_customer_cancel(text,uuid) to authenticated;
+commit;
+ then
+  raise exception 'Controlla l''indirizzo email';
+ end if;
+ if p_nome is null or p_cognome is null or p_telefono is null or length(trim(p_nome)) not between 1 and 120 or length(trim(p_cognome)) not between 1 and 120 or p_telefono !~ '^\+?[0-9 ()-]{6,25}
+returns jsonb language plpgsql stable security definer set search_path='' as $$
+declare result jsonb;
+begin
+ if auth.uid() is null then raise exception 'Accesso non autorizzato'; end if;
+ select coalesce(jsonb_agg(jsonb_build_object('id',a.id,'start',a.start_at,'end',a.end_at,'stato',a.stato,'service',s.nome,'operator',o.nome) order by a.start_at desc),'[]') into result from public.appointments a join public.customers c on c.id=a.customer_id and c.tenant_id=a.tenant_id join public.tenants t on t.id=a.tenant_id join public.services s on s.id=a.service_id join public.operators o on o.id=a.operator_id where c.user_id=auth.uid() and t.slug=p_slug;
+ return result;
+end $$;
+create or replace function public.prenow_customer_cancel(p_slug text,p_booking uuid)
+returns boolean language plpgsql security definer set search_path='' as $$
+begin
+ if auth.uid() is null then raise exception 'Accesso non autorizzato'; end if;
+ update public.appointments a set stato='cancellato_cliente',updated_at=now() from public.customers c,public.tenants t where a.id=p_booking and a.customer_id=c.id and c.tenant_id=a.tenant_id and t.id=a.tenant_id and t.slug=p_slug and c.user_id=auth.uid() and a.stato='confermato' and a.start_at>now();
+ return found;
+end $$;
+revoke all on function public.prenow_customer_catalog(text) from public,anon;
+revoke all on function public.prenow_customer_slots(text,uuid,uuid,date) from public,anon;
+revoke all on function public.prenow_customer_book(text,uuid,uuid,timestamptz,text,text,text) from public,anon;
+revoke all on function public.prenow_customer_appointments(text) from public,anon;
+revoke all on function public.prenow_customer_cancel(text,uuid) from public,anon;
+grant execute on function public.prenow_customer_catalog(text) to authenticated;
+grant execute on function public.prenow_customer_slots(text,uuid,uuid,date) to authenticated;
+grant execute on function public.prenow_customer_book(text,uuid,uuid,timestamptz,text,text,text) to authenticated;
+grant execute on function public.prenow_customer_appointments(text) to authenticated;
+grant execute on function public.prenow_customer_cancel(text,uuid) to authenticated;
+commit;
+ then
+  raise exception 'Controlla nome, cognome e cellulare';
+ end if;
+ select s.tenant_id,s.durata_min into t,duration
+ from public.services s
+ join public.tenants x on x.id=s.tenant_id
+ where x.slug=p_slug and s.id=p_service and s.attivo;
+ if t is null then raise exception 'Servizio non disponibile'; end if;
+ perform pg_advisory_xact_lock(hashtextextended(p_operator::text,0));
+ if not exists(
+  select 1 from public.prenow_customer_slots(p_slug,p_service,p_operator,(p_start at time zone 'Europe/Rome')::date) s
+  where s.start_at=p_start
+ ) then raise exception 'Orario non più disponibile'; end if;
+ select c.id into customer
+ from public.customers c
+ where c.tenant_id=t and c.user_id=u
+ order by c.created_at limit 1;
+ if customer is null then
+  if exists(select 1 from public.customers c where c.tenant_id=t and lower(c.email)=v_email) then
+   raise exception 'Email già associata a un profilo: accedi prima di prenotare';
+  end if;
+  insert into public.customers(tenant_id,user_id,nome,cognome,email,telefono)
+  values(t,u,trim(p_nome),trim(p_cognome),v_email,trim(p_telefono))
+  returning id into customer;
+ else
+  update public.customers
+  set nome=trim(p_nome),cognome=trim(p_cognome),email=v_email,telefono=trim(p_telefono)
+  where id=customer and user_id=u;
+ end if;
+ insert into public.appointments(tenant_id,customer_id,operator_id,service_id,start_at,end_at)
+ values(t,customer,p_operator,p_service,p_start,p_start+make_interval(mins=>duration))
+ returning id into booking;
+ return booking;
+end $;
+
 create or replace function public.prenow_customer_appointments(p_slug text)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
 declare result jsonb;
