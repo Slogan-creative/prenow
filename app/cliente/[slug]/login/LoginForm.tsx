@@ -75,7 +75,6 @@ export default function LoginForm({slug,logo}:Props){
 
  return <main className="claude-page login-page">
   <header className="claude-titlebar">
-   <button type="button" className="round-back" aria-label="Torna alla home" onClick={()=>window.location.assign(`/cliente/${encodeURIComponent(slug)}`)}>‹</button>
    <h1>{signup?'Registrati':'Accedi'}</h1>
   </header>
   <section className="login-content">
