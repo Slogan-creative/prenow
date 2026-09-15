@@ -27,7 +27,7 @@ export async function saveOperatorHours(form:FormData){
  await requireTenantManager(slug);const db=await createServerClient();
  const weekday=Number(form.get('weekday')),closed=form.get('chiuso')==='on';
  const starts=form.getAll('start').map(String),ends=form.getAll('end').map(String);
- const ranges=closed?[]:starts.map((s,i)=>[s,ends[i]]).filter(([s,e])=>s&&e&&s<e);
+ const ranges=closed?[]:starts.map((s,i)=>({da:s,a:ends[i]})).filter(({da,a})=>da&&a&&da<a);
  const {error}=await db.rpc('prenow_owner_save_hours',{p_slug:slug,p_operator:operatorId,p_weekday:weekday,p_closed:closed,p_ranges:ranges});
  if(error)redirect(back(slug,operatorId,'orari')+'&error=hours');
  revalidatePath(back(slug,operatorId));redirect(back(slug,operatorId,'orari')+'&saved=1');
