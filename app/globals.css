@@ -412,3 +412,26 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .owner-login{min-height:100dvh;background:#f5f6f8;display:grid;place-items:center;padding:22px}.owner-login>div{width:min(440px,100%);background:#fff;border:1px solid #e4e7ec;border-radius:18px;padding:34px}.owner-login-brand{color:#6d5ce7;font-size:24px;font-weight:800}.owner-login h1{font-size:30px;margin:24px 0 8px}.owner-login p{color:#6d7787}.owner-login form,.owner-login label{display:grid;gap:10px}.owner-login form{margin-top:25px}.owner-login input{padding:13px;border:1px solid #d9dde5;border-radius:9px}.owner-login button{margin-top:10px;padding:14px;border:0;border-radius:9px;background:#6d5ce7;color:#fff;font-weight:800}
 @media(max-width:1050px){.owner-kpis{grid-template-columns:repeat(2,1fr)}.owner-edit-grid,.owner-form-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.owner-sidebar{display:none}.owner-main{margin-left:0;padding-bottom:78px}.owner-topbar{height:64px;padding:0 18px}.owner-topbar a{font-size:13px}.owner-content{padding:24px 18px}.owner-heading{align-items:flex-start;flex-direction:column}.owner-heading h1{font-size:29px}.owner-heading .owner-primary{width:100%}.owner-kpis{gap:10px}.owner-kpis article{padding:16px}.owner-kpis b{font-size:26px}.owner-panel{padding:18px}.owner-panel-head{gap:12px}.owner-list article{grid-template-columns:60px 1fr}.owner-list em{grid-column:2}.owner-quick>div,.owner-edit-grid,.owner-form-grid{grid-template-columns:1fr}.owner-form label.wide{grid-column:auto}.owner-mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);left:0;right:0;bottom:0;height:72px;background:#151924;z-index:40;padding-bottom:env(safe-area-inset-bottom)}.owner-mobile-nav a{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;color:#929bab;text-decoration:none;font-size:10px}.owner-mobile-nav a.active{color:#fff}.owner-mobile-nav i{font-size:18px}.owner-table{margin:0 -18px}.owner-date,.owner-search{align-items:stretch}.owner-date label{flex:1}.owner-search input{min-width:0}.owner-login>div{padding:26px}}
+
+
+/* Operatori e permessi — dashboard titolare */
+.owner-staff-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.owner-staff-card{border:1px solid var(--owner-line);border-radius:16px;background:#fff;padding:20px}
+.owner-panel>.owner-staff-card{max-width:880px}
+.owner-staff-card-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.owner-staff-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eeecff;color:var(--owner-accent);font-weight:800;font-size:18px}
+.owner-staff-card-head h3{margin:0;font-size:18px}
+.access-active,.access-pending{display:inline-block;margin-top:4px;font-size:12px;font-weight:700}
+.access-active{color:#277449}.access-pending{color:#a76b13}
+.owner-staff-card input,.owner-staff-card select{width:100%;border:1px solid var(--owner-line);background:#fff;color:var(--owner-ink);border-radius:9px;padding:11px 12px;font:inherit}
+.owner-staff-card .check{display:flex;align-items:center;gap:8px;color:var(--owner-ink);align-self:end;min-height:43px}
+.owner-staff-card .check input,.owner-service-checks input{width:auto}
+.owner-service-checks{border:0;padding:0;margin:20px 0 12px}
+.owner-service-checks legend{font-size:13px;font-weight:800;margin-bottom:10px}
+.owner-service-checks label{display:inline-flex;align-items:center;gap:7px;margin:0 8px 8px 0;padding:8px 10px;border:1px solid var(--owner-line);border-radius:20px;font-size:13px}
+.owner-permission-note{color:var(--owner-muted);font-size:13px;line-height:1.5;margin:8px 0 16px}
+.owner-login-switch{width:100%;background:transparent!important;color:#5f52cc!important;border:1px solid #d9dde5!important;margin-top:12px!important}
+.owner-login [role=status]{background:#e9f7ef;color:#277449;padding:10px;border-radius:8px}
+.owner-login [role=alert]{background:#fff0ef;color:#9d302a;padding:10px;border-radius:8px}
+@media(max-width:1050px){.owner-staff-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.owner-staff-card{padding:16px}.owner-service-checks label{width:100%;margin-right:0}.owner-mobile-nav{grid-template-columns:repeat(var(--owner-nav-count,5),1fr);overflow-x:auto}.owner-mobile-nav a{min-width:64px}}
