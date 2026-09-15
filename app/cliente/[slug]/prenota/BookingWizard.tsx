@@ -2,7 +2,7 @@
 import {useEffect,useMemo,useState} from 'react';
 import BookingDetails from './BookingDetails';
 type Catalog={nome:string;services:{id:string;nome:string;durata:number;prezzo:number|null;durata_min?:number;prezzo_centesimi?:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
-type Props={catalog:Catalog;today:string;homeHref:string;initial:{service:string;operator:string;date:string};profile:{nome:string;cognome:string;telefono:string};availability:(s:string,o:string,d:string)=>Promise<{slots:{start_at:string}[];error:boolean}>;action:(f:FormData)=>Promise<void>};
+type Props={catalog:Catalog;today:string;homeHref:string;initial:{service:string;operator:string;date:string};profile:{nome:string;cognome:string;email:string;telefono:string;guest:boolean};availability:(s:string,o:string,d:string)=>Promise<{slots:{start_at:string}[];error:boolean}>;action:(f:FormData)=>Promise<void>};
 const euro=(n:number)=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n/100);
 const serviceDuration=(s:Catalog['services'][number])=>s.durata_min??s.durata;
 const servicePrice=(s:Catalog['services'][number])=>s.prezzo_centesimi??s.prezzo;
