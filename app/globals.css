@@ -277,7 +277,7 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .customer-ui .claude-page{min-height:calc(100dvh - 92px)}
 .customer-ui .claude-titlebar{min-height:102px;display:flex;align-items:center;gap:18px;padding:22px 28px;border-bottom:1px solid var(--customer-line)}
 .customer-ui .claude-titlebar h1{font-size:31px;margin:0;line-height:1.1}
-.customer-ui .round-back{width:60px;height:60px;border:1px solid var(--customer-line);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:34px;line-height:1;flex:0 0 auto}
+.customer-ui .round-back{width:60px;height:60px;border:1px solid var(--customer-line);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:34px;line-height:1;flex:0 0 auto;background:transparent;color:inherit;padding:0;cursor:pointer}
 .customer-ui .page-error{margin:24px 28px;padding:16px;border:1px solid var(--customer-danger);border-radius:14px}
 
 /* Booking wizard */
