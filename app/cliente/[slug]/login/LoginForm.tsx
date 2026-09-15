@@ -74,9 +74,6 @@ export default function LoginForm({slug,logo}:Props){
  }
 
  return <main className="claude-page login-page">
-  <header className="claude-titlebar">
-   <h1>{signup?'Registrati':'Accedi'}</h1>
-  </header>
   <section className="login-content">
    {logo&&<div className="hero-logo-wrap"><img className="brand-logo" src={logo} alt="Venus Parrucchieri"/></div>}
    <h2>{signup?'Crea il tuo profilo':'Come vuoi continuare?'}</h2>
