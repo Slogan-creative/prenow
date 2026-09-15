@@ -1,0 +1,8 @@
+import Link from 'next/link';
+import {redirect} from 'next/navigation';
+import {createServerClient} from '@/lib/supabase/server';
+export default async function Profile({params}:{params:Promise<{slug:string}>}){
+ const {slug}=await params;const db=await createServerClient();const {data:{user}}=await db.auth.getUser();if(!user)redirect(`/cliente/${slug}/login`);const m=(user.user_metadata||{}) as Record<string,string>;const nome=m.nome||user.email?.split('@')[0]||'Cliente',cognome=m.cognome||'',telefono=m.telefono||'Non inserito';const initials=(nome.charAt(0)+(cognome.charAt(0)||'')).toUpperCase();
+ async function logout(){'use server';const db=await createServerClient();await db.auth.signOut();redirect(`/cliente/${slug}/login`)}
+ return <main className="claude-page"><header className="claude-titlebar"><Link href={`/cliente/${slug}`} className="round-back">‹</Link><h1>Il mio profilo</h1></header><section className="profile-body"><div className="profile-avatar">{initials}</div><h2>{nome} {cognome}</h2><p>{user.email}</p><p className="section-kicker">DATI PERSONALI</p><div className="claude-card profile-data">{[['Nome',nome],['Cognome',cognome||'—'],['Email',user.email||'—'],['Cellulare',telefono]].map(([a,b])=><div key={a}><span>{a}</span><strong>{b}</strong></div>)}</div><Link className="claude-secondary full" href={`/cliente/${slug}/login`}>Modifica dati</Link><p className="section-kicker">SICUREZZA</p><Link className="claude-secondary full" href={`/cliente/${slug}/login`}>Cambia password</Link><p className="section-kicker">ACCOUNT</p><form action={logout}><button className="cancel-button full">Esci</button></form></section></main>;
+}

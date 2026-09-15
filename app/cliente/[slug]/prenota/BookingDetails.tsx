@@ -1,16 +1,62 @@
 'use client';
+
 import {useState} from 'react';
 import {useFormStatus} from 'react-dom';
-type Props={action:(form:FormData)=>Promise<void>;service:{id:string;nome:string;durata:number;prezzo:number|null};operator:{id:string;nome:string};date:string;slots:{start_at:string}[];back:()=>void;draft:Record<string,string>;saveDraft:(d:Record<string,string>)=>void};
-function Confirm(){const {pending}=useFormStatus();return <button className="btn btn-primary" disabled={pending}>{pending?'Conferma in corso…':'Conferma appuntamento'}</button>;}
-export default function BookingDetails({action,service,operator,date,slots,back,draft,saveDraft}:Props){
- const [review,setReview]=useState<Record<string,string>|null>(null);
- const [selected,setSelected]=useState(slots[0]?.start_at||'');
 
- const time=(s:string)=>new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit'}).format(new Date(s));
- const day=new Intl.DateTimeFormat('it-IT',{dateStyle:'full',timeZone:'Europe/Rome'}).format(new Date(date+'T12:00:00Z'));
- return review?<section className="settings-card"><span className="booking-eyebrow">PASSAGGIO 4 DI 4</span><h2>Controlla la tua prenotazione</h2><dl className="booking-summary"><dt>Servizio</dt><dd>{service.nome}</dd><dt>Operatore</dt><dd>{operator.nome}</dd><dt>Quando</dt><dd>{day}<br/>{time(review.start)} – {time(new Date(new Date(review.start).getTime()+service.durata*60000).toISOString())}</dd><dt>Durata</dt><dd>{service.durata} minuti</dd>{service.prezzo!==null && <><dt>Prezzo</dt><dd>{new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(service.prezzo/100)}</dd></>}<dt>Cliente</dt><dd>{review.nome} {review.cognome}<br/>{review.telefono}</dd></dl><form action={action}>{Object.entries({...review,service:service.id,operator:operator.id,date}).map(([name,value])=><input key={name} type="hidden" name={name} value={value}/>)}<Confirm/></form><button className="btn btn-secondary" onClick={()=>setReview(null)}>Modifica i dati</button></section>:<form className="settings-card" onSubmit={e=>{e.preventDefault();const values=Object.fromEntries(new FormData(e.currentTarget)) as Record<string,string>;saveDraft(values);setReview(values);}}>
- <span className="booking-eyebrow">PASSAGGIO 3 DI 4</span><h2>I tuoi dati</h2><p>{service.nome} · {operator.nome}<br/>{day} · {time(selected)}</p>
- <input type="hidden" name="start" value={selected}/>
- {['nome','cognome','telefono'].map(key=><div className="field" key={key}><label htmlFor={key}>{({nome:'Nome',cognome:'Cognome',telefono:'Cellulare'} as Record<string,string>)[key]}</label><input id={key} name={key} type={key==='telefono'?'tel':'text'} maxLength={key==='telefono'?25:120} autoComplete={key==='nome'?'given-name':key==='cognome'?'family-name':'tel'} value={draft[key]||''} onChange={e=>saveDraft({...draft,[key]:e.target.value})} required/></div>)}<button className="btn btn-primary">Vai al riepilogo</button><button type="button" className="btn btn-secondary" onClick={back}>Indietro agli orari</button></form>;
+type Profile={nome:string;cognome:string;email:string;telefono:string;guest:boolean};
+type Props={
+ action:(form:FormData)=>Promise<void>;
+ service:{id:string;nome:string;durata:number;prezzo:number|null};
+ operator:{id:string;nome:string};
+ date:string;
+ start:string;
+ profile:Profile;
+};
+
+function Confirm(){
+ const {pending}=useFormStatus();
+ return <button className="claude-primary" disabled={pending}>{pending?'Conferma in corso…':'Conferma appuntamento'}</button>;
+}
+
+export default function BookingDetails({action,service,operator,date,start,profile}:Props){
+ const [data,setData]=useState(profile);
+ const day=new Intl.DateTimeFormat('it-IT',{dateStyle:'full',timeZone:'Europe/Rome'}).format(new Date(date+'T12:00:00'));
+ const time=new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit'}).format(new Date(start));
+ const price=service.prezzo===null?'—':new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(service.prezzo/100);
+ const complete=Boolean(data.nome.trim()&&data.cognome.trim()&&data.telefono.trim()&&data.email.trim());
+
+ return <section className="wizard-body confirmation-step">
+  <p className="step-copy">Passaggio 5 di 5</p>
+  <div className="progress-five">{[1,2,3,4,5].map(n=><span key={n} className="on"/>)}</div>
+  <h2>Conferma</h2>
+  <div className="claude-card confirmation-hero">
+   <strong>{service.nome} con {operator.nome}</strong>
+   <span>{day} alle {time}</span>
+   <small>{service.durata} min · {price}</small>
+  </div>
+  <form action={action}>
+   <input type="hidden" name="service" value={service.id}/>
+   <input type="hidden" name="operator" value={operator.id}/>
+   <input type="hidden" name="date" value={date}/>
+   <input type="hidden" name="start" value={start}/>
+   {!complete&&<div className="claude-card compact-form">
+    <p>{profile.guest?'Inserisci i dati per la prenotazione':'Completa i dati del profilo'}</p>
+    <label>Nome<input name="nome" value={data.nome} onChange={e=>setData({...data,nome:e.target.value})} autoComplete="given-name" maxLength={120} required/></label>
+    <label>Cognome<input name="cognome" value={data.cognome} onChange={e=>setData({...data,cognome:e.target.value})} autoComplete="family-name" maxLength={120} required/></label>
+    {profile.guest
+     ?<label>Email<input name="email" type="email" value={data.email} onChange={e=>setData({...data,email:e.target.value})} autoComplete="email" required/></label>
+     :<input type="hidden" name="email" value={data.email}/>}
+    <label>Cellulare<input name="telefono" type="tel" value={data.telefono} onChange={e=>setData({...data,telefono:e.target.value})} autoComplete="tel" maxLength={25} required/></label>
+    {profile.guest&&<small>I dati saranno usati per gestire questo appuntamento, senza creare un account.</small>}
+   </div>}
+   {complete&&<>
+    <input type="hidden" name="nome" value={data.nome}/>
+    <input type="hidden" name="cognome" value={data.cognome}/>
+    <input type="hidden" name="email" value={data.email}/>
+    <input type="hidden" name="telefono" value={data.telefono}/>
+   </>}
+   <label className="notes-label">Note per il negozio (opzionale)<textarea name="note" placeholder="Es. richieste o preferenze"/></label>
+   <Confirm/>
+  </form>
+ </section>;
 }
