@@ -10,12 +10,12 @@ type Service={
  durata?:number;
  prezzo?:number|null;
 };
-type Catalog={nome:string;services:Service[]};
+type Catalog={nome:string;services:Service[];booking_enabled?:boolean};
 
 export default async function CustomerHome({params}:{params:Promise<{slug:string}>}){
  const {slug}=await params;const db=await createServerClient();
  const [{data:catalog},{data:branding}]=await Promise.all([db.rpc('prenow_customer_catalog',{p_slug:slug}),db.rpc('prenow_customer_branding',{p_slug:slug})]);
- const cat=(catalog||{nome:slug,services:[]}) as Catalog;const logo=publicLogo(branding?.logo_url);
+ const cat=(catalog||{nome:slug,services:[],booking_enabled:true}) as Catalog;const logo=publicLogo(branding?.logo_url);
  const teaserServices=cat.services.slice(0,3);
  const duration=(service:Service)=>service.durata_min??service.durata??0;
  const price=(service:Service)=>service.prezzo_centesimi??service.prezzo??null;
@@ -25,7 +25,8 @@ export default async function CustomerHome({params}:{params:Promise<{slug:string
    {logo?<div className="hero-logo-wrap"><img className="brand-logo" src={logo} alt={cat.nome}/></div>:<div className="customer-wordmark">{cat.nome}</div>}
    <h1>Prenota il tuo<br/>appuntamento</h1>
    <p>Taglio, barba e cura del dettaglio. Scegli servizio, professionista e orario.</p>
-   <Link className="claude-primary" href={`/cliente/${slug}/prenota`}>Prenota ora</Link>
+   {cat.booking_enabled===false?<div className="claude-primary booking-disabled-cta" aria-disabled="true">Prenotazioni online sospese</div>:<Link className="claude-primary" href={`/cliente/${slug}/prenota`}>Prenota ora</Link>}
+   {cat.booking_enabled===false&&<p className="booking-disabled-note">Al momento non è possibile effettuare nuove prenotazioni online. Puoi comunque consultare i tuoi appuntamenti.</p>}
    <div className="home-links"><Link href={`/cliente/${slug}/appuntamenti`}>I miei appuntamenti</Link><Link href={`/cliente/${slug}/informazioni`}>Info negozio</Link></div>
   </section>
 

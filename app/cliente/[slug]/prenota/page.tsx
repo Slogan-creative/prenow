@@ -4,7 +4,7 @@ import {redirect} from 'next/navigation';
 import {createServerClient} from '@/lib/supabase/server';
 import {revalidatePath} from 'next/cache';
 
-type Catalog={nome:string;services:{id:string;nome:string;durata:number;prezzo:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
+type Catalog={nome:string;booking_enabled?:boolean;services:{id:string;nome:string;durata:number;prezzo:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
 
 export default async function Booking({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<Record<string,string|undefined>>}) {
  const {slug}=await params;
@@ -17,6 +17,9 @@ export default async function Booking({params,searchParams}:{params:Promise<{slu
  const {data,error}=await db.rpc('prenow_customer_catalog',{p_slug:slug});
  if(error)return <main className="claude-page"><header className="claude-titlebar"><Link href={`/cliente/${slug}`} className="round-back">‹</Link><h1>Prenota</h1></header><p className="page-error">Le prenotazioni non sono disponibili al momento.</p></main>;
  const cat=data as Catalog;
+ if(cat.booking_enabled===false){
+  return <main className="claude-page"><header className="claude-titlebar"><Link href={`/cliente/${slug}`} className="round-back">‹</Link><h1>Prenota</h1></header><section className="booking-disabled-screen"><h2>Prenotazioni online sospese</h2><p>Al momento non è possibile creare nuovi appuntamenti online. Gli appuntamenti già presenti restano consultabili.</p><Link className="claude-primary" href={`/cliente/${slug}/appuntamenti`}>I miei appuntamenti</Link><Link className="claude-secondary full" href={`/cliente/${slug}`}>Torna alla home</Link></section></main>;
+ }
 
  async function availability(service:string,operator:string,date:string){
   'use server';
