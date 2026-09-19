@@ -75,3 +75,14 @@ export async function removeThemeLogo(form:FormData){
  }catch{redirect(settingsPath(slug,'aspetto')+'&error=logo')}
  revalidatePath(`/titolare/${slug}`,'layout');redirect(settingsPath(slug,'aspetto')+'&saved=logo');
 }
+
+
+export async function saveCustomerBookingStatus(form:FormData){
+ const slug=clean(form.get('slug'),48);await requireTenantManager(slug);const db=await createServerClient();
+ const enabled=form.get('enabled')==='on';
+ const {error}=await db.rpc('prenow_owner_set_customer_bookings',{p_slug:slug,p_enabled:enabled});
+ if(error)redirect(settingsPath(slug,'attivita')+'&error=booking');
+ revalidatePath(`/titolare/${slug}`,'layout');
+ revalidatePath(`/cliente/${slug}`,'layout');
+ redirect(settingsPath(slug,'attivita')+'&saved=booking');
+}
