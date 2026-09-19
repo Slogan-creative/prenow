@@ -8,7 +8,6 @@ const items=[
  {part:'agenda',label:'Agenda',icon:'▣',roles:['tenant_admin','staff','operator']},
  {part:'prenota',label:'Prenota',icon:'＋',roles:['tenant_admin','staff']},
  {part:'clienti',label:'Clienti',icon:'♙',roles:['tenant_admin','staff']},
- {part:'operatori',label:'Operatori',icon:'◎',roles:['tenant_admin','staff']},
  {part:'impostazioni',label:'Impostazioni',icon:'⚙',roles:['tenant_admin','staff']}
 ] as const;
 export default function OwnerNav({slug,nome,role}:{slug:string;nome:string;role:OwnerRole}){
