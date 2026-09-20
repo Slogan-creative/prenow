@@ -51,7 +51,6 @@ export default function AgendaProgram({appointments,today}:{appointments:Appoint
  const fmtWeekday=new Intl.DateTimeFormat('it-IT',{weekday:'short',timeZone:'Europe/Rome'});
  const fmtDay=new Intl.DateTimeFormat('it-IT',{day:'2-digit',timeZone:'Europe/Rome'});
  const fmtMonthShort=new Intl.DateTimeFormat('it-IT',{month:'short',timeZone:'Europe/Rome'});
- const fmtLong=new Intl.DateTimeFormat('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Rome'});
  const monthTitle=new Intl.DateTimeFormat('it-IT',{month:'long',year:'numeric'}).format(month);
 
  const calendarDays=useMemo(()=>{
@@ -127,16 +126,17 @@ export default function AgendaProgram({appointments,today}:{appointments:Appoint
       {isToday&&<i>OGGI</i>}
      </div>
      <div className="agenda-day-content">
-      <h3>{fmtLong.format(d)}</h3>
       <div className="agenda-day-appointments">
        {items.map(a=><article className="agenda-program-item" key={a.id}>
         <time>{fmtTime.format(new Date(a.start_at))}</time>
         <div className="agenda-program-copy">
          <b>{a.customer}</b>
          <span>{a.service} · {a.operator}</span>
-         {a.series_id&&<small>Appuntamento ricorrente{a.occurrence_number?' · #'+a.occurrence_number:''}</small>}
+         {a.series_id&&<small>↻ Ricorrente{a.occurrence_number?' · #'+a.occurrence_number:''}</small>}
         </div>
-        <em className={statusClass(String(a.stato))}>{String(a.stato).replace(/_/g,' ')}</em>
+        {statusClass(String(a.stato))==='confirmed'
+         ? <em className="confirmed agenda-status-check" aria-label="Confermato" title="Confermato">✓</em>
+         : <em className={statusClass(String(a.stato))}>{String(a.stato).replace(/_/g,' ')}</em>}
        </article>)}
       </div>
      </div>
