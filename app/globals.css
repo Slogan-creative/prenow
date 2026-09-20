@@ -624,3 +624,6 @@ table.data-table tr:hover td{background:var(--surface-2);}
  .agenda-program-copy span{font-size:12px}
  .agenda-calendar-grid button{min-height:38px}
 }
+
+.recurrence-interval-row{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center}
+.recurrence-interval-row span{color:var(--customer-copy);font-size:14px;font-weight:600}
