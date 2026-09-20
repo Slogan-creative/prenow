@@ -664,3 +664,16 @@ table.data-table tr:hover td{background:var(--surface-2);}
  .agenda-program-primary{grid-template-columns:62px minmax(0,1fr);gap:9px}
  .agenda-program-copy>span,.agenda-program-copy>small{margin-left:71px}
 }
+
+/* Agenda v2.2 — balanced day/date/month marker */
+.agenda-day-marker span,.agenda-day-marker small{
+ font-size:11px;
+ line-height:1;
+ font-weight:800;
+ letter-spacing:.08em;
+}
+.agenda-day-marker strong{
+ line-height:1;
+ margin:7px 0;
+}
+.agenda-day-marker small{margin-top:0}
