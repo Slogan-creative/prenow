@@ -1,4 +1,5 @@
 import OwnerNav from './OwnerNav';
+import OwnerUserMenu from './OwnerUserMenu';
 import {createServerClient} from '@/lib/supabase/server';
 import type {OwnerContext} from '@/lib/owner-auth';
 
@@ -10,5 +11,5 @@ export default async function OwnerLayout({children,params}:{children:React.Reac
  const {data,error}=await db.rpc('prenow_owner_context',{p_slug:slug});
  if(error||!data)return <>{children}</>;
  const ctx=data as OwnerContext;
- return <div className="owner-shell"><OwnerNav slug={slug} nome={ctx.nome} role={ctx.role}/><main className="owner-main"><header className="owner-topbar"><div><span>{ctx.role==='tenant_admin'?'Gestione attività':ctx.role==='staff'?'Gestione operativa':'La mia agenda'}</span><b>{ctx.nome}</b></div><a href={`/cliente/${slug}`}>App cliente ↗</a></header><div className="owner-content">{children}</div></main></div>;
+ return <div className="owner-shell"><OwnerNav slug={slug} nome={ctx.nome} role={ctx.role}/><main className="owner-main"><header className="owner-topbar"><OwnerUserMenu slug={slug} email={user.email||'Account'} role={ctx.role}/><div className="owner-topbar-activity"><span>{ctx.role==='tenant_admin'?'Gestione attività':ctx.role==='staff'?'Gestione operativa':'La mia agenda'}</span><b>{ctx.nome}</b></div></header><div className="owner-content">{children}</div></main></div>;
 }
