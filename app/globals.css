@@ -451,3 +451,85 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .owner-booking-control{margin-bottom:16px}.owner-booking-toggle{display:grid;gap:14px}.owner-booking-toggle .owner-switch-row{padding:4px 0}.owner-booking-toggle .owner-switch-row span{display:block}.owner-booking-toggle .owner-switch-row b,.owner-booking-toggle .owner-switch-row small{display:block}.owner-booking-toggle .owner-switch-row small{margin-top:4px;color:var(--owner-muted);font-size:12.5px;font-weight:400}.owner-status-badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;white-space:nowrap}.owner-status-badge.ok{background:rgba(63,199,126,.14);color:var(--owner-success)}.owner-status-badge.bad{background:rgba(225,91,91,.14);color:var(--owner-danger)}
 .custom-service-fields{border:1px solid var(--border);border-radius:12px;padding:14px;margin:14px 0}.custom-service-fields legend{padding:0 6px;font-weight:700}.custom-service-fields input{min-width:0;width:100%;box-sizing:border-box}.booking-disabled-cta{opacity:.65;cursor:not-allowed;text-align:center}.booking-disabled-note{font-size:13px;line-height:1.5;color:var(--text-muted);margin:10px 0 0}.booking-disabled-screen{display:grid;gap:16px;padding:24px 0}.booking-disabled-screen h2,.booking-disabled-screen p{margin:0}.booking-disabled-screen p{color:var(--text-muted);line-height:1.55}
 @media(max-width:760px){.owner-booking-control .owner-panel-head{align-items:flex-start}.owner-booking-toggle .owner-switch-row{gap:14px}.custom-service-fields{padding:12px}.custom-service-fields .field-row{grid-template-columns:1fr}.custom-service-fields input[type=number]{max-width:100%}}
+
+
+/* ============================================================
+   Owner UI alignment — same visual family as Customer app
+   ============================================================ */
+.owner-shell .owner-heading h1,
+.owner-shell .owner-panel-head h2,
+.owner-shell .owner-quick h2,
+.owner-shell .owner-modal h2,
+.owner-shell .owner-operator-header h1,
+.owner-shell .owner-mini-form h3,
+.owner-shell .owner-brand b,
+.owner-login h1{
+  font-family:Georgia,'Times New Roman',serif;
+}
+.owner-nav-icon{display:flex!important;align-items:center;justify-content:center;width:26px!important;height:26px;font-size:0!important;flex:0 0 26px}
+.owner-nav-icon svg{width:24px;height:24px;display:block}
+.owner-sidebar nav a{gap:12px}
+.owner-mobile-nav{grid-template-columns:repeat(4,minmax(64px,1fr));grid-auto-flow:unset;grid-auto-columns:unset}
+.owner-mobile-nav .owner-nav-icon{width:24px!important;height:24px;flex-basis:24px}
+.owner-mobile-nav .owner-nav-icon svg{width:24px;height:24px}
+.owner-user-menu{position:relative}
+.owner-user-trigger{display:flex;align-items:center;gap:10px;background:transparent;border:0;color:var(--owner-ink);padding:4px 6px 4px 0;cursor:pointer;text-align:left;min-width:0}
+.owner-user-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--owner-line);background:var(--owner-card-2);color:var(--owner-accent);flex:0 0 38px}
+.owner-user-avatar svg{width:21px;height:21px}
+.owner-user-copy{display:block;min-width:0}
+.owner-user-copy b,.owner-user-copy small{display:block}
+.owner-user-copy b{font-size:13px;color:var(--owner-ink)}
+.owner-user-copy small{font-size:11px;color:var(--owner-muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.owner-user-chevron{color:var(--owner-muted);font-size:16px;margin-left:2px}
+.owner-user-dropdown{position:absolute;top:calc(100% + 9px);left:0;z-index:80;min-width:220px;padding:6px;background:var(--owner-card);border:1px solid var(--owner-line);border-radius:14px;box-shadow:0 16px 36px rgba(0,0,0,.28)}
+.owner-user-dropdown a,.owner-user-dropdown button{width:100%;display:flex;align-items:center;gap:10px;padding:11px 12px;border:0;border-radius:9px;background:transparent;color:var(--owner-ink);font:inherit;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;text-align:left}
+.owner-user-dropdown a:hover,.owner-user-dropdown button:hover{background:var(--owner-card-2)}
+.owner-user-dropdown svg{width:19px;height:19px;color:var(--owner-muted);flex:0 0 19px}
+.owner-user-dropdown button:last-child{color:var(--owner-danger);border-top:1px solid var(--owner-line);border-radius:0 0 9px 9px;margin-top:4px;padding-top:12px}
+.owner-user-dropdown button:last-child svg{color:var(--owner-danger)}
+.owner-topbar-activity{text-align:right}
+.owner-date{max-width:320px}
+.owner-date label{width:100%}
+.owner-date input{cursor:pointer}
+
+/* Manual booking: reuse the approved Customer app language. */
+.owner-booking-ui{min-height:100dvh}
+.owner-booking-ui .customer-app{padding-bottom:0}
+.owner-booking-ui .manual-progress{grid-template-columns:repeat(6,1fr)}
+.owner-booking-mode{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:var(--customer-card-2);border-radius:14px;padding:5px;margin:0 0 18px}
+.owner-booking-mode button{border:0;background:transparent;color:var(--customer-muted);border-radius:11px;padding:13px 10px;font-weight:700;cursor:pointer}
+.owner-booking-mode button.active{background:var(--customer-card);color:var(--customer-copy)}
+.owner-booking-search{margin-bottom:14px}
+.owner-customer-choice{display:grid;border:1px solid var(--customer-line);border-radius:18px;overflow:hidden;background:var(--customer-card)}
+.owner-customer-choice button{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border:0;border-bottom:1px solid var(--customer-line);background:transparent;color:var(--customer-copy);text-align:left;cursor:pointer}
+.owner-customer-choice button:last-child{border-bottom:0}
+.owner-customer-choice button.selected{background:rgba(199,154,69,.10)}
+.owner-customer-choice button>span:nth-child(2){min-width:0;flex:1}
+.owner-customer-choice strong,.owner-customer-choice small{display:block}
+.owner-customer-choice strong{font-size:15px}
+.owner-customer-choice small{font-size:12.5px;color:var(--customer-muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.owner-customer-choice button>b{font-size:24px;color:#796f5b;font-weight:400}
+.owner-new-customer,.owner-custom-service{padding:20px;margin-top:14px}
+.owner-new-customer label,.owner-custom-service label{display:block;color:var(--customer-muted);font-size:14px;font-weight:600;margin-bottom:14px}
+.owner-new-customer label input,.owner-custom-service label input{margin-top:7px}
+.owner-new-customer .claude-primary,.owner-custom-service .claude-primary{min-height:56px;font-size:17px;margin-top:6px}
+.owner-new-customer .claude-primary:disabled,.owner-custom-service .claude-primary:disabled{opacity:.45;cursor:not-allowed}
+.owner-booking-ui .recap strong small{display:block;color:var(--customer-muted);font-family:var(--sans);font-size:12px;font-weight:500;margin-top:4px}
+.owner-booking-confirm .notes-label{display:block}
+.owner-booking-confirm .claude-primary{margin-top:16px}
+.owner-booking-ui [role=alert]{padding:14px 16px;border:1px solid var(--customer-danger);border-radius:12px;color:var(--customer-danger)}
+@media(max-width:760px){
+ .owner-topbar{padding:0 16px}
+ .owner-topbar-activity span{display:none}
+ .owner-topbar-activity b{font-family:Georgia,'Times New Roman',serif;font-size:16px}
+ .owner-user-copy{display:none}
+ .owner-user-trigger{padding:0}
+ .owner-user-chevron{display:none}
+ .owner-user-dropdown{min-width:210px}
+ .owner-mobile-nav a{gap:4px}
+}
+@media(max-width:480px){
+ .owner-booking-ui .claude-titlebar h1{font-size:26px}
+ .owner-booking-mode button{font-size:13px}
+ .owner-customer-choice button{padding:13px 14px}
+}
