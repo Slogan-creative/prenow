@@ -52,7 +52,7 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
    p_end_mode:input.endMode,
    p_count:input.endMode==='count'?input.count:null,
    p_end_date:input.endMode==='date'?input.endDate:null,
-   p_week_of_month:input.recurrenceType==='monthly_nth_weekday'?input.weekOfMonth:null,
+   p_week_of_month:input.recurrenceType.includes('monthly_nth_weekday')?input.weekOfMonth:null,
    p_weekday:input.recurrenceType.includes('monthly_nth_weekday')?input.weekday:null,
    p_interval:input.interval
   });
@@ -91,7 +91,7 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
    const endMode=clean(form.get('recurrence_end_mode'),12);
    const count=endMode==='count'?Number(form.get('recurrence_count')):null;
    const endDate=endMode==='date'?clean(form.get('recurrence_end_date'),10):null;
-   const weekOfMonth=recurrenceType==='monthly_nth_weekday'?Number(form.get('recurrence_week_of_month')):null;
+   const weekOfMonth=recurrenceType.includes('monthly_nth_weekday')?Number(form.get('recurrence_week_of_month')):null;
    const weekday=recurrenceType.includes('monthly_nth_weekday')?Number(form.get('recurrence_weekday')):null;
    const interval=Math.max(1,Math.min(52,Number(form.get('recurrence_interval'))||1));
    const result=await db.rpc('prenow_staff_book_recurrence',{
@@ -108,7 +108,7 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
     p_end_mode:endMode,
     p_count:endMode==='count'?count:null,
     p_end_date:endMode==='date'?endDate:null,
-    p_week_of_month:recurrenceType==='monthly_nth_weekday'?weekOfMonth:null,
+    p_week_of_month:recurrenceType.includes('monthly_nth_weekday')?weekOfMonth:null,
     p_weekday:recurrenceType.includes('monthly_nth_weekday')?weekday:null,
     p_interval:interval
    });
