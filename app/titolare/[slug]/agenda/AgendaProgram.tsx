@@ -50,6 +50,7 @@ export default function AgendaProgram({appointments,today}:{appointments:Appoint
  const fmtTime=new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',hour:'2-digit',minute:'2-digit'});
  const fmtWeekday=new Intl.DateTimeFormat('it-IT',{weekday:'short',timeZone:'Europe/Rome'});
  const fmtDay=new Intl.DateTimeFormat('it-IT',{day:'2-digit',timeZone:'Europe/Rome'});
+ const fmtMonthShort=new Intl.DateTimeFormat('it-IT',{month:'short',timeZone:'Europe/Rome'});
  const fmtLong=new Intl.DateTimeFormat('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Rome'});
  const monthTitle=new Intl.DateTimeFormat('it-IT',{month:'long',year:'numeric'}).format(month);
 
@@ -122,6 +123,7 @@ export default function AgendaProgram({appointments,today}:{appointments:Appoint
      <div className="agenda-day-marker">
       <span>{fmtWeekday.format(d).replace('.','').toUpperCase()}</span>
       <strong>{fmtDay.format(d)}</strong>
+      <small>{fmtMonthShort.format(d).replace('.','').toUpperCase()}</small>
       {isToday&&<i>OGGI</i>}
      </div>
      <div className="agenda-day-content">
