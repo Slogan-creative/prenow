@@ -37,7 +37,7 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
 
  async function previewRecurrence(input:{
   service:string;operator:string;start:string;customName:string;customDuration:number;
-  recurrenceType:string;endMode:string;count:number|null;endDate:string|null;weekOfMonth:number|null;weekday:number|null;
+  recurrenceType:string;endMode:string;count:number|null;endDate:string|null;weekOfMonth:number|null;weekday:number|null;interval:number;
  }){
   'use server';
   const db=await createServerClient();
@@ -53,7 +53,8 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
    p_count:input.endMode==='count'?input.count:null,
    p_end_date:input.endMode==='date'?input.endDate:null,
    p_week_of_month:input.recurrenceType==='monthly_nth_weekday'?input.weekOfMonth:null,
-   p_weekday:input.recurrenceType==='monthly_nth_weekday'?input.weekday:null
+   p_weekday:input.recurrenceType.includes('monthly_nth_weekday')?input.weekday:null,
+   p_interval:input.interval
   });
   if(result.error||!result.data)return {error:true,total:0,available:0,conflicts:0,occurrences:[] as {occurrence_no:number;date:string;start_at:string;available:boolean}[]};
   const data=result.data as {total:number;available:number;conflicts:number;occurrences:{occurrence_no:number;date:string;start_at:string;available:boolean}[]};
@@ -91,7 +92,8 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
    const count=endMode==='count'?Number(form.get('recurrence_count')):null;
    const endDate=endMode==='date'?clean(form.get('recurrence_end_date'),10):null;
    const weekOfMonth=recurrenceType==='monthly_nth_weekday'?Number(form.get('recurrence_week_of_month')):null;
-   const weekday=recurrenceType==='monthly_nth_weekday'?Number(form.get('recurrence_weekday')):null;
+   const weekday=recurrenceType.includes('monthly_nth_weekday')?Number(form.get('recurrence_weekday')):null;
+   const interval=Math.max(1,Math.min(52,Number(form.get('recurrence_interval'))||1));
    const result=await db.rpc('prenow_staff_book_recurrence',{
     p_tenant:id,
     p_customer:customer,
@@ -107,7 +109,8 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
     p_count:endMode==='count'?count:null,
     p_end_date:endMode==='date'?endDate:null,
     p_week_of_month:recurrenceType==='monthly_nth_weekday'?weekOfMonth:null,
-    p_weekday:recurrenceType==='monthly_nth_weekday'?weekday:null
+    p_weekday:recurrenceType.includes('monthly_nth_weekday')?weekday:null,
+    p_interval:interval
    });
    if(result.error||!result.data)redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=booking`);
   }else{
