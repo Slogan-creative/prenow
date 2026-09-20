@@ -86,3 +86,9 @@ export async function saveCustomerBookingStatus(form:FormData){
  revalidatePath(`/cliente/${slug}`,'layout');
  redirect(settingsPath(slug,'attivita')+'&saved=booking');
 }
+
+export async function saveCustomerRecurrenceStatus(form:FormData){
+ const slug=clean(form.get('slug'),48);await requireTenantManager(slug);const db=await createServerClient();
+ const enabled=form.get('enabled')==='on';const {error}=await db.rpc('prenow_owner_set_customer_recurrence',{p_slug:slug,p_enabled:enabled});
+ if(error)redirect(settingsPath(slug,'attivita')+'&error=recurrence');revalidatePath(`/cliente/${slug}`,'layout');redirect(settingsPath(slug,'attivita')+'&saved=recurrence');
+}
