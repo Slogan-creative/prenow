@@ -128,9 +128,8 @@ export default function AgendaProgram({appointments,today}:{appointments:Appoint
      <div className="agenda-day-content">
       <div className="agenda-day-appointments">
        {items.map(a=><article className="agenda-program-item" key={a.id}>
-        <time>{fmtTime.format(new Date(a.start_at))}</time>
         <div className="agenda-program-copy">
-         <b>{a.customer}</b>
+         <div className="agenda-program-primary"><time>{fmtTime.format(new Date(a.start_at))}</time><b>{a.customer}</b></div>
          <span>{a.service} · {a.operator}</span>
          {a.series_id&&<small>↻ Ricorrente{a.occurrence_number?' · #'+a.occurrence_number:''}</small>}
         </div>
