@@ -13,7 +13,6 @@ export default function OwnerUserMenu({slug,email,role,activityName}:{slug:strin
   <button className="owner-user-trigger" type="button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} aria-haspopup="menu">
    <span className="owner-user-avatar"><UserIcon/></span>
    <span className="owner-user-copy"><b>{activityName}</b><small>{email}</small></span>
-   <span className="owner-user-chevron">⌄</span>
   </button>
   {open&&<div className="owner-user-dropdown" role="menu">
    {role!=='operator'&&<Link href={`/titolare/${encodeURIComponent(slug)}/impostazioni`} onClick={()=>setOpen(false)}><SettingsIcon/><span>Impostazioni</span></Link>}
