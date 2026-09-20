@@ -4,7 +4,7 @@ import {redirect} from 'next/navigation';
 import {createServerClient} from '@/lib/supabase/server';
 import {revalidatePath} from 'next/cache';
 
-type Catalog={nome:string;booking_enabled?:boolean;services:{id:string;nome:string;durata:number;prezzo:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
+type Catalog={nome:string;booking_enabled?:boolean;recurrence_enabled?:boolean;services:{id:string;nome:string;durata:number;prezzo:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
 
 export default async function Booking({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<Record<string,string|undefined>>}) {
  const {slug}=await params;
@@ -44,9 +44,20 @@ export default async function Booking({params,searchParams}:{params:Promise<{slu
    p_telefono:String(f.get('telefono'))
   };
   const guest=user.is_anonymous===true;
-  const result=guest
-   ?await db.rpc('prenow_customer_book_guest',{...common,p_email:String(f.get('email'))})
-   :await db.rpc('prenow_customer_book',common);
+  const wantsRecurrence=f.get('recurrence_enabled')==='1';
+  const result=wantsRecurrence&&!guest
+   ?await db.rpc('prenow_customer_book_recurrence',{...common,
+     p_recurrence_type:String(f.get('recurrence_type')||'custom_monthly_day'),
+     p_end_mode:String(f.get('recurrence_end_mode')||'count'),
+     p_count:f.get('recurrence_end_mode')==='date'?null:Number(f.get('recurrence_count')||6),
+     p_end_date:f.get('recurrence_end_mode')==='date'?String(f.get('recurrence_end_date')||''):null,
+     p_week_of_month:String(f.get('recurrence_type')).includes('nth_weekday')?Number(f.get('recurrence_week_of_month')||1):null,
+     p_weekday:['custom_weekly','custom_monthly_nth_weekday'].includes(String(f.get('recurrence_type')))?Number(f.get('recurrence_weekday')):null,
+     p_interval:Number(f.get('recurrence_interval')||1)
+    })
+   :guest
+    ?await db.rpc('prenow_customer_book_guest',{...common,p_email:String(f.get('email'))})
+    :await db.rpc('prenow_customer_book',common);
   const back=new URLSearchParams({
    service:String(f.get('service')),
    operator:String(f.get('operator')),
@@ -58,7 +69,7 @@ export default async function Booking({params,searchParams}:{params:Promise<{slu
   }
   revalidatePath('/admin');
   revalidatePath(`/cliente/${slug}/appuntamenti`);
-  redirect(`/cliente/${slug}/prenota?booking=${result.data}&service=${f.get('service')}&operator=${f.get('operator')}&date=${f.get('date')}&start=${encodeURIComponent(String(f.get('start')))}`);
+  const bookingId=wantsRecurrence&&result.data&&typeof result.data==='object'?String((result.data as any).series_id||'serie'):String(result.data);\n  redirect(`/cliente/${slug}/prenota?booking=${bookingId}&service=${f.get('service')}&operator=${f.get('operator')}&date=${f.get('date')}&start=${encodeURIComponent(String(f.get('start')))}`);
  }
 
  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
