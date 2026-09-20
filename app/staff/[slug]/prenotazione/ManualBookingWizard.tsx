@@ -1,6 +1,7 @@
 'use client';
 import {useMemo,useState} from 'react';
 import Link from 'next/link';
+import {CalendarIcon,CalendarPlusIcon,HomeIcon,UsersIcon} from '../../../titolare/[slug]/OwnerIcons';
 
 type Service={id:string;nome:string;durata_min:number;prezzo_centesimi:number|null};
 type Operator={id:string;nome:string};
@@ -94,6 +95,12 @@ export default function ManualBookingWizard({
  const selectedDay=date?new Date(date+'T12:00:00').getDate():0;
  const recurrenceDescription=recurrenceType==='weekly'?'Ogni settimana':recurrenceType==='biweekly'?'Ogni 2 settimane':recurrenceType==='monthly_day'?'Ogni mese, giorno '+selectedDay:(weekLabels.find(x=>x.value===weekOfMonth)?.label||'')+' '+weekdayLabels[weekday]+' del mese';
 
+ const bottomNav=<nav className="owner-mobile-nav booking-owner-mobile-nav">
+  <Link href={`/titolare/${slug}`}><i className="owner-nav-icon"><HomeIcon/></i><span>Home</span></Link>
+  <Link href={`/titolare/${slug}/agenda`}><i className="owner-nav-icon"><CalendarIcon/></i><span>Agenda</span></Link>
+  <Link className="active" href={`/staff/${slug}/prenotazione`}><i className="owner-nav-icon"><CalendarPlusIcon/></i><span>Prenota</span></Link>
+  <Link href={`/titolare/${slug}/clienti`}><i className="owner-nav-icon"><UsersIcon/></i><span>Clienti</span></Link>
+ </nav>;
  return <main className="customer-ui owner-booking-ui"><div className="customer-app booking-flow">{header}<section className="wizard-body">{progress}
   {step===1&&<><h2>Per chi?</h2><p>Scegli un cliente esistente oppure creane uno nuovo.</p><div className="owner-booking-mode"><button type="button" className={customerMode==='existing'?'active':''} onClick={()=>setCustomerMode('existing')}>Cliente esistente</button><button type="button" className={customerMode==='new'?'active':''} onClick={()=>setCustomerMode('new')}>Nuovo cliente</button></div>
    {customerMode==='existing'?<><input className="owner-booking-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Cerca per nome, email o telefono"/><div className="owner-customer-choice">{filtered.map(c=><button type="button" key={c.id} className={customerId===c.id?'selected':''} onClick={()=>{setCustomerId(c.id);next(2)}}><span className="op-avatar">{c.nome.charAt(0)}</span><span><strong>{c.nome} {c.cognome||''}</strong><small>{c.email||c.telefono||'Nessun contatto'}</small></span><b>›</b></button>)}</div></>:<div className="claude-card owner-new-customer"><label>Nome<input value={newCustomer.nome} onChange={e=>setNewCustomer({...newCustomer,nome:e.target.value})}/></label><label>Cognome<input value={newCustomer.cognome} onChange={e=>setNewCustomer({...newCustomer,cognome:e.target.value})}/></label><label>Email<input type="email" value={newCustomer.email} onChange={e=>setNewCustomer({...newCustomer,email:e.target.value})}/></label><label>Telefono<input type="tel" value={newCustomer.telefono} onChange={e=>setNewCustomer({...newCustomer,telefono:e.target.value})}/></label><button type="button" className="claude-primary" disabled={!canUseNew} onClick={()=>next(2)}>Continua</button></div>}
@@ -120,5 +127,5 @@ export default function ManualBookingWizard({
     </div>}
    </section>
    <form action={book} className="owner-booking-confirm"><input type="hidden" name="customer_mode" value={customerMode==='existing'?'esistente':'nuovo'}/><input type="hidden" name="customer" value={customerId}/><input type="hidden" name="nome" value={newCustomer.nome}/><input type="hidden" name="cognome" value={newCustomer.cognome}/><input type="hidden" name="email" value={newCustomer.email}/><input type="hidden" name="telefono" value={newCustomer.telefono}/><input type="hidden" name="service" value={serviceId}/><input type="hidden" name="custom_name" value={custom.name}/><input type="hidden" name="custom_duration" value={custom.duration}/><input type="hidden" name="custom_price" value={custom.price}/><input type="hidden" name="operator" value={operatorId}/><input type="hidden" name="date" value={date}/><input type="hidden" name="start" value={selected}/><input type="hidden" name="recurring" value={recurring?'1':'0'}/><input type="hidden" name="recurrence_type" value={recurrenceType}/><input type="hidden" name="recurrence_end_mode" value={recurrenceEndMode}/><input type="hidden" name="recurrence_count" value={recurrenceCount}/><input type="hidden" name="recurrence_end_date" value={recurrenceEndDate}/><input type="hidden" name="recurrence_week_of_month" value={weekOfMonth}/><input type="hidden" name="recurrence_weekday" value={weekday}/><label className="notes-label">Note interne<textarea name="note" maxLength={1000} placeholder="Facoltative"/></label><button className="claude-primary" disabled={recurring&&(!recurrencePreview||recurrencePreview.error||recurrencePreview.available<1)}>{recurring&&recurrencePreview?'Crea '+recurrencePreview.available+' appuntamenti disponibili':'Conferma prenotazione'}</button></form></>}
- </section></div></main>
+ </section></div>{bottomNav}</main>
 }
