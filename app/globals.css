@@ -533,3 +533,32 @@ table.data-table tr:hover td{background:var(--surface-2);}
  .owner-booking-mode button{font-size:13px}
  .owner-customer-choice button{padding:13px 14px}
 }
+
+
+/* Owner recurring appointments */
+.recurrence-card{padding:20px;margin:18px 0}
+.recurrence-switch{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0!important;color:var(--customer-copy)!important}
+.recurrence-switch>span{min-width:0}
+.recurrence-switch strong,.recurrence-switch small{display:block}
+.recurrence-switch strong{font-size:16px}
+.recurrence-switch small{margin-top:4px;color:var(--customer-muted);font-size:12.5px;font-weight:400}
+.recurrence-switch input{width:44px!important;height:24px;accent-color:var(--customer-gold);flex:0 0 auto}
+.recurrence-fields{display:grid;gap:14px;border-top:1px solid var(--customer-line);margin-top:18px;padding-top:18px}
+.recurrence-fields>label,.recurrence-inline label{display:grid;gap:7px;color:var(--customer-muted);font-size:13px;font-weight:700}
+.recurrence-fields select,.recurrence-fields input{width:100%;background:var(--customer-card-2);color:var(--customer-copy);border:1px solid var(--customer-line);border-radius:10px;padding:12px 13px;font:inherit}
+.recurrence-inline{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.recurrence-summary-line{padding:11px 13px;border:1px solid var(--customer-line);border-radius:10px;color:var(--customer-gold);font-weight:700;font-size:13px}
+.recurrence-end-tabs{margin:2px 0 0}
+.recurrence-preview-button{min-height:54px!important;font-size:16px!important}
+.recurrence-preview{border:1px solid var(--customer-line);border-radius:14px;padding:14px;background:var(--customer-card-2)}
+.recurrence-preview.bad{border-color:var(--customer-danger);color:var(--customer-danger)}
+.recurrence-preview-counts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.recurrence-preview-counts strong{margin-right:auto}
+.recurrence-preview-counts span{border-radius:999px;padding:5px 9px;background:rgba(63,199,126,.14);color:#75a884;font-size:11.5px;font-weight:700}
+.recurrence-preview-counts span.conflicts{background:rgba(182,96,78,.14);color:var(--customer-danger)}
+.recurrence-conflicts{display:grid;gap:5px;margin-top:13px;padding-top:12px;border-top:1px solid var(--customer-line)}
+.recurrence-conflicts small{color:var(--customer-muted);font-weight:700;margin-bottom:3px}
+.recurrence-conflicts span{font-size:13px}
+.recurrence-conflicts p{font-size:12.5px;margin:7px 0 0}
+.owner-booking-confirm .claude-primary:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:480px){.recurrence-card{padding:16px}.recurrence-inline{grid-template-columns:1fr}.recurrence-switch{align-items:flex-start}.recurrence-preview-counts strong{width:100%;margin-right:0}}
