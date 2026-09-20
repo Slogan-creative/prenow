@@ -96,7 +96,13 @@ export default function ManualBookingWizard({
  const conflictRows=recurrencePreview?.occurrences.filter(o=>!o.available)||[];
  const selectedDay=date?new Date(date+'T12:00:00').getDate():0;
  const interval=Math.max(1,Number(recurrenceInterval)||1);
- const recurrenceDescription=recurrenceType==='custom_weekly'?'Ogni '+interval+(interval===1?' settimana':' settimane')+', '+weekdayLabels[weekday].toLowerCase():recurrenceType==='custom_monthly_day'?'Ogni '+interval+(interval===1?' mese':' mesi')+', giorno '+selectedDay:'Ogni '+interval+(interval===1?' mese, ':' mesi, ')+(weekLabels.find(x=>x.value===weekOfMonth)?.label||'')+' '+weekdayLabels[weekday].toLowerCase();
+ const ordinal=(weekLabels.find(x=>x.value===weekOfMonth)?.label||'').toLowerCase();
+ const weekdayName=weekdayLabels[weekday].toLowerCase();
+ const recurrenceDescription=recurrenceType==='custom_weekly'
+  ? (interval===1?'Ogni '+weekdayName:'Ogni '+interval+' settimane, il '+weekdayName)
+  : recurrenceType==='custom_monthly_day'
+   ? (interval===1?'Ogni mese, il giorno '+selectedDay:'Ogni '+interval+' mesi, il giorno '+selectedDay)
+   : (interval===1?'Ogni '+ordinal+' '+weekdayName+' del mese':'Ogni '+ordinal+' '+weekdayName+', ogni '+interval+' mesi');
 
  const bottomNav=<nav className="owner-mobile-nav booking-owner-mobile-nav">
   <Link href={`/titolare/${slug}`}><i className="owner-nav-icon"><HomeIcon/></i><span>Home</span></Link>
