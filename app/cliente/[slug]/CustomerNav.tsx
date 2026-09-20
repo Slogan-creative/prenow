@@ -10,7 +10,7 @@ const items=[
 ];
 export default function CustomerNav({slug}:{slug:string}){
  const pathname=usePathname();
- if(pathname.includes('/login')||pathname.includes('/prenota'))return null;
+ if(pathname.includes('/login'))return null;
  return <nav className="customer-nav" aria-label="Navigazione principale">{items.map(item=>{
   const href=`/cliente/${encodeURIComponent(slug)}${item.suffix}`;
   const active=item.suffix?pathname===href:pathname===`/cliente/${slug}`;

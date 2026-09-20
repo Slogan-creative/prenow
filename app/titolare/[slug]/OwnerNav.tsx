@@ -2,12 +2,12 @@
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import type {OwnerRole} from '@/lib/owner-auth';
-import {CalendarIcon,CalendarPlusIcon,HomeIcon,UsersIcon} from './OwnerIcons';
+import {AppointmentsIcon,CalendarIcon,HomeIcon,UsersIcon} from './OwnerIcons';
 
 const items=[
  {part:'',label:'Home',Icon:HomeIcon,roles:['tenant_admin','staff','operator']},
- {part:'agenda',label:'Agenda',Icon:CalendarIcon,roles:['tenant_admin','staff','operator']},
- {part:'prenota',label:'Prenota',Icon:CalendarPlusIcon,roles:['tenant_admin','staff']},
+ {part:'prenota',label:'Prenota',Icon:CalendarIcon,roles:['tenant_admin','staff']},
+ {part:'agenda',label:'Appuntamenti',Icon:AppointmentsIcon,roles:['tenant_admin','staff','operator']},
  {part:'clienti',label:'Clienti',Icon:UsersIcon,roles:['tenant_admin','staff']}
 ] as const;
 
