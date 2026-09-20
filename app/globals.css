@@ -684,3 +684,18 @@ table.data-table tr:hover td{background:var(--surface-2);}
  }
  .owner-mobile-nav a{justify-content:flex-start;padding-top:2px;gap:5px}
 }
+
+/* Owner header avatar optical centering */
+.owner-user-avatar{position:relative;overflow:hidden}
+.owner-user-avatar svg{
+ position:absolute;
+ left:50%;
+ top:50%;
+ width:21px;
+ height:21px;
+ margin:0;
+ transform:translate(-50%,-50%);
+}
+@media(max-width:760px){
+ .owner-user-chevron{display:none!important}
+}
