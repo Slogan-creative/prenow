@@ -35,6 +35,31 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
   return {slots:(result.data||[]) as {start_at:string}[],error:!!result.error};
  }
 
+ async function previewRecurrence(input:{
+  service:string;operator:string;start:string;customName:string;customDuration:number;
+  recurrenceType:string;endMode:string;count:number|null;endDate:string|null;weekOfMonth:number|null;weekday:number|null;
+ }){
+  'use server';
+  const db=await createServerClient();
+  const result=await db.rpc('prenow_staff_preview_recurrence',{
+   p_tenant:id,
+   p_service:input.service===CUSTOM?null:input.service,
+   p_operator:input.operator,
+   p_start:input.start,
+   p_custom_name:input.service===CUSTOM?input.customName:null,
+   p_custom_duration:input.service===CUSTOM?input.customDuration:null,
+   p_recurrence_type:input.recurrenceType,
+   p_end_mode:input.endMode,
+   p_count:input.endMode==='count'?input.count:null,
+   p_end_date:input.endMode==='date'?input.endDate:null,
+   p_week_of_month:input.recurrenceType==='monthly_nth_weekday'?input.weekOfMonth:null,
+   p_weekday:input.recurrenceType==='monthly_nth_weekday'?input.weekday:null
+  });
+  if(result.error||!result.data)return {error:true,total:0,available:0,conflicts:0,occurrences:[] as {occurrence_no:number;date:string;start_at:string;available:boolean}[]};
+  const data=result.data as {total:number;available:number;conflicts:number;occurrences:{occurrence_no:number;date:string;start_at:string;available:boolean}[]};
+  return {...data,error:false};
+ }
+
  async function book(form:FormData){
   'use server';
   const db=await createServerClient();
@@ -47,18 +72,51 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
   const priceEuros=Number(priceRaw);
   const priceCents=Math.round(priceEuros*100);
   if(isCustom&&(!customName||!Number.isInteger(duration)||duration<5||duration>480||!Number.isFinite(priceEuros)||priceEuros<0))redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=custom`);
+
   if(form.get('customer_mode')==='nuovo'){
    const created=await db.rpc('prenow_staff_create_customer',{p_tenant:id,p_name:clean(form.get('nome'),120),p_surname:clean(form.get('cognome'),120),p_email:clean(form.get('email')).toLowerCase(),p_phone:clean(form.get('telefono'),25)});
    if(created.error||!created.data)redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=customer`);
    customer=String(created.data);
   }
   if(!customer)redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=customer`);
+
   const start=clean(form.get('start'),60);
   const operator=clean(form.get('operator'),36);
-  const result=isCustom
-   ?await db.rpc('prenow_staff_book_custom',{p_tenant:id,p_operator:operator,p_start:start,p_customer:customer,p_note:clean(form.get('note'),1000),p_service_name:customName,p_duration:duration,p_price_cents:priceCents})
-   :await db.rpc('prenow_staff_book',{p_tenant:id,p_service:service,p_operator:operator,p_start:start,p_customer:customer,p_note:clean(form.get('note'),1000)});
-  if(result.error||!result.data)redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=booking`);
+  const note=clean(form.get('note'),1000);
+  const recurring=form.get('recurring')==='1';
+
+  if(recurring){
+   const recurrenceType=clean(form.get('recurrence_type'),32);
+   const endMode=clean(form.get('recurrence_end_mode'),12);
+   const count=endMode==='count'?Number(form.get('recurrence_count')):null;
+   const endDate=endMode==='date'?clean(form.get('recurrence_end_date'),10):null;
+   const weekOfMonth=recurrenceType==='monthly_nth_weekday'?Number(form.get('recurrence_week_of_month')):null;
+   const weekday=recurrenceType==='monthly_nth_weekday'?Number(form.get('recurrence_weekday')):null;
+   const result=await db.rpc('prenow_staff_book_recurrence',{
+    p_tenant:id,
+    p_customer:customer,
+    p_service:isCustom?null:service,
+    p_operator:operator,
+    p_start:start,
+    p_note:note,
+    p_custom_name:isCustom?customName:null,
+    p_custom_duration:isCustom?duration:null,
+    p_custom_price_cents:isCustom?priceCents:null,
+    p_recurrence_type:recurrenceType,
+    p_end_mode:endMode,
+    p_count:endMode==='count'?count:null,
+    p_end_date:endMode==='date'?endDate:null,
+    p_week_of_month:recurrenceType==='monthly_nth_weekday'?weekOfMonth:null,
+    p_weekday:recurrenceType==='monthly_nth_weekday'?weekday:null
+   });
+   if(result.error||!result.data)redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=booking`);
+  }else{
+   const result=isCustom
+    ?await db.rpc('prenow_staff_book_custom',{p_tenant:id,p_operator:operator,p_start:start,p_customer:customer,p_note:note,p_service_name:customName,p_duration:duration,p_price_cents:priceCents})
+    :await db.rpc('prenow_staff_book',{p_tenant:id,p_service:service,p_operator:operator,p_start:start,p_customer:customer,p_note:note});
+   if(result.error||!result.data)redirect(`/titolare/${encodeURIComponent(slug)}/prenota?error=booking`);
+  }
+
   const date=clean(form.get('date'),10);
   redirect(`/titolare/${encodeURIComponent(slug)}/agenda?date=${encodeURIComponent(date)}`);
  }
@@ -71,6 +129,7 @@ export default async function ManualBooking({params,searchParams}:{params:Promis
   customers={customers.data||[]}
   initialCustomer={q.customer}
   availability={availability}
+  previewRecurrence={previewRecurrence}
   book={book}
  />;
 }
