@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
 import BookingDetails from './BookingDetails';
-type Catalog={nome:string;services:{id:string;nome:string;durata:number;prezzo:number|null;durata_min?:number;prezzo_centesimi?:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
+type Catalog={nome:string;recurrence_enabled?:boolean;services:{id:string;nome:string;durata:number;prezzo:number|null;durata_min?:number;prezzo_centesimi?:number|null}[];operators:{id:string;nome:string;services:string[]}[]};
 type Props={catalog:Catalog;today:string;homeHref:string;initial:{service:string;operator:string;date:string};profile:{nome:string;cognome:string;email:string;telefono:string;guest:boolean};availability:(s:string,o:string,d:string)=>Promise<{slots:{start_at:string}[];error:boolean}>;action:(f:FormData)=>Promise<void>};
 const euro=(n:number)=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n/100);
 const serviceDuration=(s:Catalog['services'][number])=>s.durata_min??s.durata;
@@ -18,7 +18,7 @@ export default function BookingWizard({catalog,today,homeHref,initial,profile,av
  const steps=<><p className="step-copy">Passaggio {step} di 5</p><div className="progress-five">{[1,2,3,4,5].map(n=><span key={n} className={n<=step?'on':''}/>)}</div></>;
  const goBack=()=>{if(step>1){setStep(step-1);window.scrollTo(0,0)}else window.location.assign(homeHref)};
  const header=<header className="claude-titlebar"><button type="button" className="round-back" aria-label="Torna indietro" onClick={goBack}>‹</button><h1>Prenota</h1></header>;
- if(step===5&&service&&operator&&selected)return <>{header}<BookingDetails action={action} service={service} operator={operator} date={date} start={selected} profile={profile}/></>;
+ if(step===5&&service&&operator&&selected)return <>{header}<BookingDetails action={action} service={service} operator={operator} date={date} start={selected} profile={profile} recurrenceEnabled={catalog.recurrence_enabled===true}/></>;
  return <>{header}<section className="wizard-body">{steps}
  {step===1&&<><h2>Cosa desideri?</h2><p>Scegli il servizio: gli orari mostrati dipenderanno dalla durata.</p><div className="svc-full-card">{catalog.services.map(s=>{const price=servicePrice(s);return <button key={s.id} className="svc-full-row" onClick={()=>chooseService(s.id)}><div><div className="svc-full-nome">{s.nome}</div><div className="svc-full-durata">{serviceDuration(s)} min</div></div><div className="svc-full-right">{price!==null&&<span className="svc-full-prezzo">€{Math.round(price/100)}</span>}<span className="svc-full-chev">›</span></div></button>})}</div></>}
  {step===2&&<><h2>Con chi?</h2><p>Scegli un professionista oppure lascia decidere a noi.</p><div className="op-full-card"><button className="op-row" onClick={()=>chooseOperator('')}><div className="op-avatar">★</div><div className="op-name">Primo disponibile</div><span className="op-chev">›</span></button>{operators.map(o=><button key={o.id} className="op-row" onClick={()=>chooseOperator(o.id)}><div className="op-avatar">{o.nome.charAt(0)}</div><div className="op-name">{o.nome}</div><span className="op-chev">›</span></button>)}</div></>}
