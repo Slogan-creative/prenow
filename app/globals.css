@@ -652,3 +652,15 @@ table.data-table tr:hover td{background:var(--surface-2);}
  .agenda-program-copy b{font-size:15px}
  .agenda-program-copy span{font-size:12px}
 }
+
+/* Agenda v2.1 — time and customer share the primary line */
+.agenda-program-item{grid-template-columns:minmax(0,1fr) 34px!important}
+.agenda-program-copy{min-width:0}
+.agenda-program-primary{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:baseline}
+.agenda-program-primary time{font-style:normal;font-weight:800;color:var(--owner-text);white-space:nowrap}
+.agenda-program-copy>span,.agenda-program-copy>small{display:block;margin-left:88px}
+@media(max-width:760px){
+ .agenda-program-item{grid-template-columns:minmax(0,1fr) 30px!important;gap:9px}
+ .agenda-program-primary{grid-template-columns:62px minmax(0,1fr);gap:9px}
+ .agenda-program-copy>span,.agenda-program-copy>small{margin-left:71px}
+}
