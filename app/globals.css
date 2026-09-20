@@ -590,9 +590,10 @@ table.data-table tr:hover td{background:var(--surface-2);}
 .agenda-day-section{display:grid;grid-template-columns:74px 1fr;gap:16px;padding:24px 0 8px;scroll-margin-top:140px}
 .agenda-day-section+.agenda-day-section{border-top:1px solid var(--owner-line)}
 .agenda-day-marker{text-align:center;align-self:start;padding-top:3px}
-.agenda-day-marker span,.agenda-day-marker strong,.agenda-day-marker i{display:block}
+.agenda-day-marker span,.agenda-day-marker strong,.agenda-day-marker small,.agenda-day-marker i{display:block}
 .agenda-day-marker span{font-size:11px;color:var(--owner-muted);font-weight:800;letter-spacing:.05em}
 .agenda-day-marker strong{font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1.05;margin-top:4px}
+.agenda-day-marker small{font-size:10px;color:var(--owner-muted);font-weight:800;letter-spacing:.08em;margin-top:5px}
 .agenda-day-marker i{font-style:normal;font-size:9px;font-weight:800;color:var(--owner-accent);margin-top:6px;letter-spacing:.08em}
 .agenda-day-content h3{margin:0 0 8px;color:var(--owner-muted);font-size:12px;font-weight:700;text-transform:capitalize}
 .agenda-day-appointments{display:grid}
@@ -617,8 +618,8 @@ table.data-table tr:hover td{background:var(--surface-2);}
  .agenda-day-section{grid-template-columns:54px 1fr;gap:12px;padding:20px 0 6px;scroll-margin-top:124px}
  .agenda-day-marker strong{font-size:27px}
  .agenda-day-content h3{font-size:11px}
- .agenda-program-item{grid-template-columns:58px minmax(0,1fr);gap:10px;padding:13px 0}
- .agenda-program-item em{grid-column:2;justify-self:start;margin-top:-4px}
+ .agenda-program-item{grid-template-columns:58px minmax(0,1fr) auto;gap:10px;padding:13px 0}
+ .agenda-program-item em{grid-column:3;justify-self:end;margin-top:0;white-space:nowrap}
  .agenda-program-item time{font-size:15px}
  .agenda-program-copy b{font-size:14px}
  .agenda-program-copy span{font-size:12px}
