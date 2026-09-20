@@ -210,7 +210,7 @@ table.data-table tr:hover td{background:var(--surface-2);}
  background:#080908;color:var(--customer-copy);min-height:100dvh;
 }
 .customer-ui .customer-app{max-width:600px;min-height:100dvh;margin:0 auto;background:var(--customer-bg);border-left:1px solid var(--customer-line);border-right:1px solid var(--customer-line);padding-bottom:92px}
-.customer-ui .customer-app:has(.booking-flow),.customer-ui .customer-app:has(.login-page){padding-bottom:0}
+.customer-ui .customer-app:has(.login-page){padding-bottom:0}
 .customer-ui h1,.customer-ui h2,.customer-ui .appointment-time,.customer-ui .confirmation-hero strong,.customer-ui .customer-wordmark{font-family:Georgia,'Times New Roman',serif;color:var(--customer-copy);font-weight:700}
 .customer-ui p{color:var(--customer-muted);line-height:1.45}
 .customer-ui a{text-underline-offset:5px}
