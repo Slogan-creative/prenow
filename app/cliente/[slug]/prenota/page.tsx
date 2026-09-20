@@ -69,7 +69,8 @@ export default async function Booking({params,searchParams}:{params:Promise<{slu
   }
   revalidatePath('/admin');
   revalidatePath(`/cliente/${slug}/appuntamenti`);
-  const bookingId=wantsRecurrence&&result.data&&typeof result.data==='object'?String((result.data as any).series_id||'serie'):String(result.data);\n  redirect(`/cliente/${slug}/prenota?booking=${bookingId}&service=${f.get('service')}&operator=${f.get('operator')}&date=${f.get('date')}&start=${encodeURIComponent(String(f.get('start')))}`);
+  const bookingId=wantsRecurrence&&result.data&&typeof result.data==='object'?String((result.data as any).series_id||'serie'):String(result.data);
+  redirect(`/cliente/${slug}/prenota?booking=${bookingId}&service=${f.get('service')}&operator=${f.get('operator')}&date=${f.get('date')}&start=${encodeURIComponent(String(f.get('start')))}`);
  }
 
  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
