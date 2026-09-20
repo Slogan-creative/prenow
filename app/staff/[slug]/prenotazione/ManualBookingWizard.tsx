@@ -35,7 +35,7 @@ export default function ManualBookingWizard({
  const [loading,setLoading]=useState(false);
  const [slotError,setSlotError]=useState(false);
  const [recurring,setRecurring]=useState(false);
- const [recurrenceType,setRecurrenceType]=useState('monthly_day');
+ const [recurrenceType,setRecurrenceType]=useState('custom_monthly_day');
  const [recurrenceInterval,setRecurrenceInterval]=useState('1');
  const [recurrenceEndMode,setRecurrenceEndMode]=useState<'count'|'date'>('count');
  const [recurrenceCount,setRecurrenceCount]=useState('6');
@@ -83,7 +83,7 @@ export default function ManualBookingWizard({
     recurrenceType,endMode:recurrenceEndMode,
     count:recurrenceEndMode==='count'?Number(recurrenceCount):null,
     endDate:recurrenceEndMode==='date'?recurrenceEndDate:null,
-    weekOfMonth:recurrenceType==='monthly_nth_weekday'?weekOfMonth:null,
+    weekOfMonth:recurrenceType.includes('monthly_nth_weekday')?weekOfMonth:null,
     weekday:recurrenceType.includes('monthly_nth_weekday')?weekday:null,
     interval:Number(recurrenceInterval)||1
    });
@@ -96,7 +96,7 @@ export default function ManualBookingWizard({
  const conflictRows=recurrencePreview?.occurrences.filter(o=>!o.available)||[];
  const selectedDay=date?new Date(date+'T12:00:00').getDate():0;
  const interval=Math.max(1,Number(recurrenceInterval)||1);
- const recurrenceDescription=recurrenceType==='weekly'?'Ogni settimana':recurrenceType==='biweekly'?'Ogni 2 settimane':recurrenceType==='monthly_day'?'Ogni mese, giorno '+selectedDay:recurrenceType==='monthly_nth_weekday'?(weekLabels.find(x=>x.value===weekOfMonth)?.label||'')+' '+weekdayLabels[weekday]+' del mese':recurrenceType==='custom_weekly'?'Ogni '+interval+(interval===1?' settimana':' settimane')+', '+weekdayLabels[weekday].toLowerCase():recurrenceType==='custom_monthly_day'?'Ogni '+interval+(interval===1?' mese':' mesi')+', giorno '+selectedDay:'Ogni '+interval+(interval===1?' mese, ':' mesi, ')+(weekLabels.find(x=>x.value===weekOfMonth)?.label||'')+' '+weekdayLabels[weekday].toLowerCase();
+ const recurrenceDescription=recurrenceType==='custom_weekly'?'Ogni '+interval+(interval===1?' settimana':' settimane')+', '+weekdayLabels[weekday].toLowerCase():recurrenceType==='custom_monthly_day'?'Ogni '+interval+(interval===1?' mese':' mesi')+', giorno '+selectedDay:'Ogni '+interval+(interval===1?' mese, ':' mesi, ')+(weekLabels.find(x=>x.value===weekOfMonth)?.label||'')+' '+weekdayLabels[weekday].toLowerCase();
 
  const bottomNav=<nav className="owner-mobile-nav booking-owner-mobile-nav">
   <Link href={`/titolare/${slug}`}><i className="owner-nav-icon"><HomeIcon/></i><span>Home</span></Link>
@@ -120,10 +120,10 @@ export default function ManualBookingWizard({
      <input type="checkbox" checked={recurring} onChange={e=>{setRecurring(e.target.checked);clearPreview()}}/>
     </label>
     {recurring&&<div className="recurrence-fields">
-     <label>Frequenza<select value={recurrenceType} onChange={e=>{setRecurrenceType(e.target.value);setRecurrenceInterval('1');clearPreview()}}><option value="weekly">Ogni settimana</option><option value="monthly_day">Ogni mese nello stesso giorno</option><option value="monthly_nth_weekday">Giorno specifico del mese</option><option value="custom_weekly">Personalizza settimane…</option><option value="custom_monthly_day">Personalizza mesi · stesso giorno…</option><option value="custom_monthly_nth_weekday">Personalizza mesi · giorno della settimana…</option></select></label>
-     {recurrenceType.startsWith('custom_')&&<label>Ripeti ogni<div className="recurrence-interval-row"><input type="number" min="1" max={recurrenceType==='custom_weekly'?52:24} value={recurrenceInterval} onChange={e=>{setRecurrenceInterval(e.target.value);clearPreview()}}/><span>{recurrenceType==='custom_weekly'?(interval===1?'settimana':'settimane'):(interval===1?'mese':'mesi')}</span></div></label>}
+     <label>Frequenza<select value={recurrenceType} onChange={e=>{setRecurrenceType(e.target.value);setRecurrenceInterval('1');clearPreview()}}><option value="custom_weekly">Ogni N settimane</option><option value="custom_monthly_day">Ogni N mesi · stesso giorno</option><option value="custom_monthly_nth_weekday">Ogni N mesi · giorno della settimana</option></select></label>
+     <label>Ripeti ogni<div className="recurrence-interval-row"><input type="number" min="1" max={recurrenceType==='custom_weekly'?52:24} value={recurrenceInterval} onChange={e=>{setRecurrenceInterval(e.target.value);clearPreview()}}/><span>{recurrenceType==='custom_weekly'?(interval===1?'settimana':'settimane'):(interval===1?'mese':'mesi')}</span></div></label>
      {recurrenceType==='custom_weekly'&&<label>Giorno<select value={weekday} onChange={e=>{setWeekday(Number(e.target.value));clearPreview()}}>{weekdayLabels.map((x,i)=><option value={i} key={x}>{x}</option>)}</select></label>}
-     {(recurrenceType==='monthly_nth_weekday'||recurrenceType==='custom_monthly_nth_weekday')&&<div className="recurrence-inline"><label>Settimana<select value={weekOfMonth} onChange={e=>{setWeekOfMonth(Number(e.target.value));clearPreview()}}>{weekLabels.map(x=><option value={x.value} key={x.value}>{x.label}</option>)}</select></label><label>Giorno<select value={weekday} onChange={e=>{setWeekday(Number(e.target.value));clearPreview()}}>{weekdayLabels.map((x,i)=><option value={i} key={x}>{x}</option>)}</select></label></div>}
+     {recurrenceType==='custom_monthly_nth_weekday'&&<div className="recurrence-inline"><label>Settimana<select value={weekOfMonth} onChange={e=>{setWeekOfMonth(Number(e.target.value));clearPreview()}}>{weekLabels.map(x=><option value={x.value} key={x.value}>{x.label}</option>)}</select></label><label>Giorno<select value={weekday} onChange={e=>{setWeekday(Number(e.target.value));clearPreview()}}>{weekdayLabels.map((x,i)=><option value={i} key={x}>{x}</option>)}</select></label></div>}
      <div className="recurrence-summary-line">{recurrenceDescription}</div>
      <div className="owner-booking-mode recurrence-end-tabs"><button type="button" className={recurrenceEndMode==='count'?'active':''} onClick={()=>{setRecurrenceEndMode('count');clearPreview()}}>Dopo N appuntamenti</button><button type="button" className={recurrenceEndMode==='date'?'active':''} onClick={()=>{setRecurrenceEndMode('date');clearPreview()}}>Fino a una data</button></div>
      {recurrenceEndMode==='count'?<label>Numero appuntamenti<input type="number" min="2" max="60" value={recurrenceCount} onChange={e=>{setRecurrenceCount(e.target.value);clearPreview()}}/></label>:<label>Data finale<input type="date" min={date} value={recurrenceEndDate} onChange={e=>{setRecurrenceEndDate(e.target.value);clearPreview()}}/></label>}
